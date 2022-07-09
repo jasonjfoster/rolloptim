@@ -12,6 +12,7 @@ n_size <- n_obs * n_vars
 dates <- rev(seq(Sys.Date(), length.out = n_obs, by = "-1 day"))
 
 test_width <- 5
+test_gamma <- 1
 test_total <- 1
 test_lower <- 0
 test_upper <- 1
@@ -21,7 +22,27 @@ colnames(test_zoo) <- paste0("x", 1:n_vars)
 
 mu <- roll_prod(1 + test_zoo, test_width, min_obs = 1) - 1
 sigma <- roll_cov(test_zoo, width = test_width, min_obs = 1) * 1000
-*/
+
+# library(quantmod)
+# 
+# tickers <- c("ITOT", "TLT", "IEF", "IYR")
+# width_st <- 252
+# width_lt <- 252 * 5
+# scale <- list("periods" = 252, "overlap" = 5)
+# 
+# getSymbols(tickers, src = "tiingo", from = "1900-01-01", adjust = TRUE, api.key = Sys.getenv("TIINGO_API_KEY"))
+# prices <- do.call(merge, c(lapply(tickers, function(i) Cl(get(i))), all = TRUE))
+# colnames(prices) <- tickers
+# 
+# returns <- na.omit(diff(log(prices)))
+# overlap <- roll_mean(returns, scale[["overlap"]], min_obs = 1)
+# 
+# mu <- roll_prod(1 + returns, width_st, min_obs = 1) - 1
+# sigma <- roll_cov(overlap, width = width_lt, min_obs = 1)
+# 
+# risk <- roll_sd(overlap, width_st, min_obs = 1) * sqrt(scale[["periods"]]) * sqrt(scale[["overlap"]])
+# ratio <- mu / risk
+  */
 
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::depends(RcppParallel)]]
@@ -335,6 +356,153 @@ struct RollMinRiskGeq : public Worker {
 
 };
 
+// 'Worker' function for computing the rolling optimization
+struct RollMinRiskNeq : public Worker {
+  
+  const arma::mat arma_mu;      // source
+  const arma::cube arma_sigma;
+  const int n_rows_mu;
+  const int n_cols_mu;
+  const double gamma;
+  const double total;
+  const arma::vec arma_lower;
+  const arma::vec arma_upper;
+  const arma::vec arma_ones;
+  const arma::mat arma_diag;
+  arma::mat& arma_weights;      // destination (pass by reference)
+  
+  // initialize with source and destination
+  RollMinRiskNeq(const arma::mat arma_mu, const arma::cube arma_sigma,
+                 const int n_rows_mu, const int n_cols_mu,
+                 const double gamma, const double total,
+                 const arma::vec arma_lower, const arma::vec arma_upper,
+                 const arma::vec arma_ones, const arma::mat arma_diag,
+                 arma::mat& arma_weights)
+    : arma_mu(arma_mu), arma_sigma(arma_sigma),
+      n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
+      gamma(gamma), total(total),
+      arma_lower(arma_lower), arma_upper(arma_upper),
+      arma_ones(arma_ones), arma_diag(arma_diag),
+      arma_weights(arma_weights) { }
+  
+  // function call operator that iterates by slice
+  void operator()(std::size_t begin_slice, std::size_t end_slice) {
+    for (std::size_t i = begin_slice; i < end_slice; i++) {
+      
+      int n_solve = 0;
+      int n_size = n_cols_mu;
+      long double obj = arma::datum::inf;
+      long double obj_prev = arma::datum::inf;
+      arma::mat mu = arma_mu.row(i);
+      arma::mat sigma = arma_sigma.slice(i);
+      arma::mat A = gamma * sigma;
+      arma::vec b = trans(mu);
+      arma::vec weights(n_size);
+      
+      // total constraint
+      n_size += 1;
+      
+      A = join_rows(A, arma_ones);
+      
+      b.resize(n_size);
+      b(n_size - 1) = total;
+      
+      // lower constraints
+      n_size += n_cols_mu;
+      
+      A = join_rows(A, arma_diag);
+      
+      b.resize(n_size);
+      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_lower;
+      
+      // upper constraints
+      n_size += n_cols_mu;
+      
+      A = join_rows(A, arma_diag);
+      
+      b.resize(n_size);
+      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_upper;
+      
+      A.resize(n_size, n_size);
+      
+      // coefficients matrix is symmetric
+      arma::mat A_trans = trans(A);
+      arma::uvec lower_tri = trimatl_ind(size(A));
+      A(lower_tri) = A_trans(lower_tri);
+      
+      // number of index combinations
+      for (int j = 0; j < pow((long double)2.0, (long double)2.0 * n_cols_mu); j++) {
+        
+        n_size = n_cols_mu + 1;
+        arma::uvec arma_ix = arma::linspace<arma::uvec>(0, n_size - 1, n_size);
+        
+        // find the index combination
+        for (int k = 0; k < 2 * n_cols_mu; k++) {
+          
+          if (!(j & (int)pow((long double)2.0, k))) {
+            
+            n_size += 1;
+            
+            arma_ix.resize(n_size);
+            arma_ix(n_size - 1) = n_cols_mu + 1 + k;
+            
+          }
+          
+        }
+        
+        arma::mat A_subset = A(arma_ix, arma_ix);
+        arma::vec b_subset = b(arma_ix);
+        
+        // check if solution is found 
+        bool status_solve = arma::solve(weights, A_subset, b_subset,
+                                        arma::solve_opts::no_approx);
+        
+        // don't find approximate solution for rank deficient system
+        if (status_solve) {
+          
+          arma_ix = arma::linspace<arma::uvec>(0, n_cols_mu - 1, n_cols_mu);
+          
+          // weights
+          arma::vec weights_subset = weights(arma_ix);
+          arma::mat trans_weights = trans(weights_subset);
+          
+          // check if constraints are satisfied
+          if (all(weights_subset >= arma_lower[0]) && all(weights_subset <= arma_upper[0])) {
+            
+            n_solve += 1;
+            
+            // objective value
+            obj = gamma * as_scalar(trans_weights * sigma * weights_subset) -
+              sum(mu * weights_subset);
+            
+            if (obj <= obj_prev) {
+              
+              obj_prev = obj;
+              
+              arma_weights.row(i) = trans_weights;
+              
+            }
+            
+          }
+          
+        }
+        
+      }
+      
+      if (n_solve == 0) {
+        
+        arma::rowvec no_solution(n_cols_mu);
+        no_solution.fill(NA_REAL);
+        
+        arma_weights.row(i) = no_solution;
+        
+      }
+      
+    }
+  }
+  
+};
+
 // https://stackoverflow.com/a/31725653
 // [[Rcpp::export(.roll_max_return)]]
 NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigma,
@@ -420,6 +588,46 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   
 }
 
+// [[Rcpp::export(.roll_max_ratio)]]
+NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma,
+                             const double& gamma, const double& total,
+                             const double& lower, const double& upper) {
+  
+  int n_rows_mu = mu.nrow();
+  int n_cols_mu = mu.ncol();
+  arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
+  arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
+  arma::vec arma_lower(n_cols_mu);
+  arma::vec arma_upper(n_cols_mu);
+  arma::vec arma_ones(n_cols_mu);
+  arma::mat arma_diag(n_cols_mu, n_cols_mu);
+  arma::mat arma_weights(n_rows_mu, n_cols_mu);
+  
+  arma_ones.ones();
+  arma_diag.eye();
+  arma_lower.fill(lower);
+  arma_upper.fill(upper);
+  
+  // compute rolling optimizations
+  RollMinRiskNeq roll_max_ratio(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                                gamma, total, arma_lower, arma_upper,
+                                arma_ones, arma_diag, arma_weights);
+  parallelFor(0, n_rows_mu, roll_max_ratio);
+  
+  NumericMatrix result(wrap(arma_weights));
+  List dimnames = mu.attr("dimnames");
+  result.attr("dimnames") = dimnames;
+  result.attr("index") = mu.attr("index");
+  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
+  result.attr(".indexTZ") = mu.attr(".indexTZ");
+  result.attr("tclass") = mu.attr("tclass");
+  result.attr("tzone") = mu.attr("tzone");
+  result.attr("class") = mu.attr("class");
+  
+  return result;
+  
+}
+
 /*** R
 ##' Rolling Portfolio Optimizations to Minimize Risk
 ##'
@@ -429,12 +637,14 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
 ##' @param sigma cube. Slices are covariance matrices.
 ##' @examples
 
-roll_result <- .roll_max_return(mu, sigma, test_total, test_lower, test_upper)
-roll_result <- .roll_min_risk(mu, sigma, test_total, test_lower, test_upper)
+roll_min_risk_result <- .roll_min_risk(mu, sigma, test_total, test_lower, test_upper)
+roll_max_return_result <- .roll_max_return(mu, sigma, test_total, test_lower, test_upper)
+roll_max_ratio_result <- .roll_max_ratio(mu, sigma, test_gamma,
+                                         test_total, test_lower, test_upper)
 */
 
 /*** R
-rollapplyr_cube <- function(f, type, mu, sigma, total = 1, lower = 0, upper = 1) {
+rollapplyr_cube <- function(f, type, gamma, mu, sigma, total = 1, lower = 0, upper = 1) {
   
   mu_attr <- attributes(mu)
   
@@ -445,8 +655,8 @@ rollapplyr_cube <- function(f, type, mu, sigma, total = 1, lower = 0, upper = 1)
   for (i in 2:n_rows_mu) {
     
     status_solve <- tryCatch(f(mu[i, ], Sigma = sigma[ , , i],
-                               control = list(type = type, constraint = "user",
-                                              gamma = sqrt(.Machine$double.eps),
+                               control = list(type = type, gamma = gamma,
+                                              constraint = "user",
                                               LB = rep(lower, n_cols_mu),
                                               UB = rep(upper, n_cols_mu))),
                              
@@ -466,19 +676,24 @@ rollapplyr_cube <- function(f, type, mu, sigma, total = 1, lower = 0, upper = 1)
 */
 
 /*** R
-rp_result <- rollapplyr_cube(optimalPortfolio, "mv", mu, sigma,
-                             test_total, test_lower, test_upper)
+rp_min_risk_result <- rollapplyr_cube(optimalPortfolio, "minvol", 1, mu, sigma,
+                                      test_total, test_lower, test_upper)
 
-rp_result <- rollapplyr_cube(optimalPortfolio, "minvol", mu, sigma,
-                             test_total, test_lower, test_upper)
+rp_max_return_result <- rollapplyr_cube(optimalPortfolio, "mv", sqrt(.Machine$double.eps),
+                                        mu, sigma, test_total, test_lower, test_upper)
+
+rp_max_ratio_result <- rollapplyr_cube(optimalPortfolio, "mv", test_gamma, 
+                                       mu, sigma, test_total, test_lower, test_upper)
+
 */
 
 /*** R
-expect_equal(roll_result[4:15], rp_result[4:15])
+# expect_equal(roll_max_ratio_result[4:nrow(returns_xts)],
+#              rp_max_ratio_result[4:nrow(returns_xts)])
 */
 
 /*** R
-microbenchmark("roll" = .roll_min_risk(mu, sigma,  test_total, test_lower, test_upper),
-               "rp" = rollapplyr_cube(optimalPortfolio, mu, sigma,
-                                      test_total, test_lower, test_upper))
+# microbenchmark("roll" = .roll_min_risk(mu, sigma,  test_total, test_lower, test_upper),
+#                "rp" = rollapplyr_cube(optimalPortfolio, mu, sigma,
+#                                       test_total, test_lower, test_upper))
 */
