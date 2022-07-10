@@ -1,0 +1,4 @@
+useDynLib(rollport, .registration = TRUE)
+export(roll_min_risk, roll_max_return, roll_max_ratio)
+importFrom(Rcpp, evalCpp)
+importFrom(RcppParallel, RcppParallelLibs)

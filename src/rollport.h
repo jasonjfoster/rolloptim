@@ -1,51 +1,8 @@
-/*** R
-library(quantmod)
-library(roll)
-library(RiskPortfolios)
-library(testthat)
-library(microbenchmark)
+#ifndef ROLLPORT_H
+#define ROLLPORT_H
 
-set.seed(5640)
-n_vars <- 3
-n_obs <- 15
-n_size <- n_obs * n_vars
-dates <- rev(seq(Sys.Date(), length.out = n_obs, by = "-1 day"))
+#define ARMA_DONT_PRINT_ERRORS
 
-test_width <- 5
-test_gamma <- 1
-test_total <- 1
-test_lower <- 0
-test_upper <- 1
-
-test_zoo <- zoo(matrix(rnorm(n_size) / 1000, nrow = n_obs, ncol = n_vars), dates)
-colnames(test_zoo) <- paste0("x", 1:n_vars)
-
-mu <- roll_prod(1 + test_zoo, test_width, min_obs = 1) - 1
-sigma <- roll_cov(test_zoo, width = test_width, min_obs = 1) * 1000
-
-# library(quantmod)
-# 
-# tickers <- c("ITOT", "TLT", "IEF", "IYR")
-# width_st <- 252
-# width_lt <- 252 * 5
-# scale <- list("periods" = 252, "overlap" = 5)
-# 
-# getSymbols(tickers, src = "tiingo", from = "1900-01-01", adjust = TRUE, api.key = Sys.getenv("TIINGO_API_KEY"))
-# prices <- do.call(merge, c(lapply(tickers, function(i) Cl(get(i))), all = TRUE))
-# colnames(prices) <- tickers
-# 
-# returns <- na.omit(diff(log(prices)))
-# overlap <- roll_mean(returns, scale[["overlap"]], min_obs = 1)
-# 
-# mu <- roll_prod(1 + returns, width_st, min_obs = 1) - 1
-# sigma <- roll_cov(overlap, width = width_lt, min_obs = 1)
-# 
-# risk <- roll_sd(overlap, width_st, min_obs = 1) * sqrt(scale[["periods"]]) * sqrt(scale[["overlap"]])
-# ratio <- mu / risk
-  */
-
-// [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::depends(RcppParallel)]]
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
 using namespace Rcpp;
@@ -205,7 +162,7 @@ struct RollMinRiskEq : public Worker {
 
 // 'Worker' function for computing the rolling optimization
 struct RollMinRiskGeq : public Worker {
-
+  
   const arma::mat arma_mu;      // source
   const arma::cube arma_sigma;
   const int n_rows_mu;
@@ -216,7 +173,7 @@ struct RollMinRiskGeq : public Worker {
   const arma::vec arma_ones;
   const arma::mat arma_diag;
   arma::mat& arma_weights;      // destination (pass by reference)
-
+  
   // initialize with source and destination
   RollMinRiskGeq(const arma::mat arma_mu, const arma::cube arma_sigma,
                  const int n_rows_mu, const int n_cols_mu,
@@ -228,7 +185,7 @@ struct RollMinRiskGeq : public Worker {
       total(total), arma_lower(arma_lower),
       arma_upper(arma_upper), arma_ones(arma_ones),
       arma_diag(arma_diag), arma_weights(arma_weights) { }
-
+  
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
@@ -259,7 +216,7 @@ struct RollMinRiskGeq : public Worker {
       
       b.resize(n_size);
       b(n_size - 1) = target;
-
+      
       // lower constraints
       n_size += n_cols_mu;
       
@@ -337,7 +294,7 @@ struct RollMinRiskGeq : public Worker {
             }
             
           }
-
+          
         }
         
       }
@@ -350,14 +307,14 @@ struct RollMinRiskGeq : public Worker {
         arma_weights.row(i) = no_solution;
         
       }
-
+      
     }
   }
-
+  
 };
 
 // 'Worker' function for computing the rolling optimization
-struct RollMinRiskNeq : public Worker {
+struct RollMaxRatio : public Worker {
   
   const arma::mat arma_mu;      // source
   const arma::cube arma_sigma;
@@ -372,12 +329,12 @@ struct RollMinRiskNeq : public Worker {
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
-  RollMinRiskNeq(const arma::mat arma_mu, const arma::cube arma_sigma,
-                 const int n_rows_mu, const int n_cols_mu,
-                 const double gamma, const double total,
-                 const arma::vec arma_lower, const arma::vec arma_upper,
-                 const arma::vec arma_ones, const arma::mat arma_diag,
-                 arma::mat& arma_weights)
+  RollMaxRatio(const arma::mat arma_mu, const arma::cube arma_sigma,
+               const int n_rows_mu, const int n_cols_mu,
+               const double gamma, const double total,
+               const arma::vec arma_lower, const arma::vec arma_upper,
+               const arma::vec arma_ones, const arma::mat arma_diag,
+               arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
       gamma(gamma), total(total),
@@ -503,197 +460,4 @@ struct RollMinRiskNeq : public Worker {
   
 };
 
-// https://stackoverflow.com/a/31725653
-// [[Rcpp::export(.roll_max_return)]]
-NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigma,
-                              const double& total, const double& lower,
-                              const double& upper) {
-  
-  int n_rows_mu = mu.nrow();
-  int n_cols_mu = mu.ncol();
-  arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
-  arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
-  arma::vec arma_lower(n_cols_mu);
-  arma::vec arma_upper(n_cols_mu);
-  arma::vec arma_ones(n_cols_mu);
-  arma::mat arma_diag(n_cols_mu, n_cols_mu);
-  arma::mat arma_weights(n_rows_mu, n_cols_mu);
-  
-  // // check 'x' and 'y' arguments for errors
-  // check_lm(n_rows_xy, yy.nrow());
-  // check both rows and cols (remove "_mu" from names?)
-  
-  arma_ones.ones();
-  arma_diag.eye();
-  arma_lower.fill(lower);
-  arma_upper.fill(upper);
-  
-  // compute rolling optimizations
-  RollMinRiskEq roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                total, arma_lower, arma_upper,
-                                arma_ones, arma_diag, arma_weights);
-  parallelFor(0, n_rows_mu, roll_max_return);
-  
-  NumericMatrix result(wrap(arma_weights));
-  List dimnames = mu.attr("dimnames");
-  result.attr("dimnames") = dimnames;
-  result.attr("index") = mu.attr("index");
-  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
-  result.attr(".indexTZ") = mu.attr(".indexTZ");
-  result.attr("tclass") = mu.attr("tclass");
-  result.attr("tzone") = mu.attr("tzone");
-  result.attr("class") = mu.attr("class");
-  
-  return result;
-  
-}
-
-// [[Rcpp::export(.roll_min_risk)]]
-NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
-                            const double& total, const double& lower,
-                            const double& upper) {
-  
-  int n_rows_mu = mu.nrow();
-  int n_cols_mu = mu.ncol();
-  arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
-  arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
-  arma::vec arma_lower(n_cols_mu);
-  arma::vec arma_upper(n_cols_mu);
-  arma::vec arma_ones(n_cols_mu);
-  arma::mat arma_diag(n_cols_mu, n_cols_mu);
-  arma::mat arma_weights(n_rows_mu, n_cols_mu);
-  
-  arma_ones.ones();
-  arma_diag.eye();
-  arma_lower.fill(lower);
-  arma_upper.fill(upper);
-  
-  // compute rolling optimizations
-  RollMinRiskGeq roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                               total, arma_lower, arma_upper,
-                               arma_ones, arma_diag, arma_weights);
-  parallelFor(0, n_rows_mu, roll_min_risk);
-  
-  NumericMatrix result(wrap(arma_weights));
-  List dimnames = mu.attr("dimnames");
-  result.attr("dimnames") = dimnames;
-  result.attr("index") = mu.attr("index");
-  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
-  result.attr(".indexTZ") = mu.attr(".indexTZ");
-  result.attr("tclass") = mu.attr("tclass");
-  result.attr("tzone") = mu.attr("tzone");
-  result.attr("class") = mu.attr("class");
-  
-  return result;
-  
-}
-
-// [[Rcpp::export(.roll_max_ratio)]]
-NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma,
-                             const double& gamma, const double& total,
-                             const double& lower, const double& upper) {
-  
-  int n_rows_mu = mu.nrow();
-  int n_cols_mu = mu.ncol();
-  arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
-  arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
-  arma::vec arma_lower(n_cols_mu);
-  arma::vec arma_upper(n_cols_mu);
-  arma::vec arma_ones(n_cols_mu);
-  arma::mat arma_diag(n_cols_mu, n_cols_mu);
-  arma::mat arma_weights(n_rows_mu, n_cols_mu);
-  
-  arma_ones.ones();
-  arma_diag.eye();
-  arma_lower.fill(lower);
-  arma_upper.fill(upper);
-  
-  // compute rolling optimizations
-  RollMinRiskNeq roll_max_ratio(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                gamma, total, arma_lower, arma_upper,
-                                arma_ones, arma_diag, arma_weights);
-  parallelFor(0, n_rows_mu, roll_max_ratio);
-  
-  NumericMatrix result(wrap(arma_weights));
-  List dimnames = mu.attr("dimnames");
-  result.attr("dimnames") = dimnames;
-  result.attr("index") = mu.attr("index");
-  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
-  result.attr(".indexTZ") = mu.attr(".indexTZ");
-  result.attr("tclass") = mu.attr("tclass");
-  result.attr("tzone") = mu.attr("tzone");
-  result.attr("class") = mu.attr("class");
-  
-  return result;
-  
-}
-
-/*** R
-##' Rolling Portfolio Optimizations to Minimize Risk
-##'
-##' A function for computing the rolling portfolio optimizations to minimize risk.
-##' 
-##' @param mu matrix. Rows are returns and columns are variables.
-##' @param sigma cube. Slices are covariance matrices.
-##' @examples
-
-roll_min_risk_result <- .roll_min_risk(mu, sigma, test_total, test_lower, test_upper)
-roll_max_return_result <- .roll_max_return(mu, sigma, test_total, test_lower, test_upper)
-roll_max_ratio_result <- .roll_max_ratio(mu, sigma, test_gamma,
-                                         test_total, test_lower, test_upper)
-*/
-
-/*** R
-rollapplyr_cube <- function(f, type, gamma, mu, sigma, total = 1, lower = 0, upper = 1) {
-  
-  mu_attr <- attributes(mu)
-  
-  n_rows_mu <- nrow(mu)
-  n_cols_mu <- ncol(mu)
-  result <- matrix(as.numeric(NA), n_rows_mu, n_cols_mu)
-  
-  for (i in 2:n_rows_mu) {
-    
-    status_solve <- tryCatch(f(mu[i, ], Sigma = sigma[ , , i],
-                               control = list(type = type, gamma = gamma,
-                                              constraint = "user",
-                                              LB = rep(lower, n_cols_mu),
-                                              UB = rep(upper, n_cols_mu))),
-                             
-                             error = function(x) {
-                               rep(NA, n_cols_mu)
-                             })
-    
-    result[i, ] <- status_solve
-    
-  }
-  
-  attributes(result) <- mu_attr
-  
-  return(result)
-  
-}
-*/
-
-/*** R
-rp_min_risk_result <- rollapplyr_cube(optimalPortfolio, "minvol", 1, mu, sigma,
-                                      test_total, test_lower, test_upper)
-
-rp_max_return_result <- rollapplyr_cube(optimalPortfolio, "mv", sqrt(.Machine$double.eps),
-                                        mu, sigma, test_total, test_lower, test_upper)
-
-rp_max_ratio_result <- rollapplyr_cube(optimalPortfolio, "mv", test_gamma, 
-                                       mu, sigma, test_total, test_lower, test_upper)
-
-*/
-
-/*** R
-# expect_equal(roll_max_ratio_result[4:nrow(returns_xts)],
-#              rp_max_ratio_result[4:nrow(returns_xts)])
-*/
-
-/*** R
-# microbenchmark("roll" = .roll_min_risk(mu, sigma,  test_total, test_lower, test_upper),
-#                "rp" = rollapplyr_cube(optimalPortfolio, mu, sigma,
-#                                       test_total, test_lower, test_upper))
-*/
+#endif
