@@ -24,7 +24,7 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling optimizations
+  // compute rolling portfolio optimization
   RollMinRiskEq roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                                 total, arma_lower, arma_upper,
                                 arma_ones, arma_diag, arma_weights);
@@ -64,7 +64,7 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling optimizations
+  // compute rolling portfolio optimization
   RollMinRiskGeq roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                                total, arma_lower, arma_upper,
                                arma_ones, arma_diag, arma_weights);
@@ -104,7 +104,7 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling optimizations
+  // compute rolling portfolio optimization
   RollMaxRatio roll_max_ratio(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                               gamma, total, arma_lower, arma_upper,
                               arma_ones, arma_diag, arma_weights);
@@ -123,12 +123,3 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   return result;
   
 }
-
-/*** R
-
-
-roll_min_risk_result <- .roll_min_risk(mu, sigma, test_total, test_lower, test_upper)
-roll_max_return_result <- .roll_max_return(mu, sigma, test_total, test_lower, test_upper)
-roll_max_ratio_result <- .roll_max_ratio(mu, sigma, test_gamma,
-                                         test_total, test_lower, test_upper)
-*/

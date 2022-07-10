@@ -1,12 +1,12 @@
-##' Rolling Portfolio Optimizations to Minimize Risk
+##' Rolling Portfolio Optimization to Minimize Risks
 ##'
-##' A function for computing the rolling portfolio optimizations to minimize risk.
+##' A function for computing rolling portfolio optimization to minimize risks.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
 ##' @param total numeric. Sum of the weights.
-##' @param lower numeric. Lower boundry of the weights.
-##' @param upper numeric. Upper boundry of the weights.
+##' @param lower numeric. Lower bound of the weights.
+##' @param upper numeric. Upper bound of the weights.
 ##' @examples
 ##' @export
 roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
@@ -19,15 +19,15 @@ roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimizations to Maximize Return
+##' Rolling Portfolio Optimization to Maximize Returns
 ##'
-##' A function for computing the rolling portfolio optimizations to maximize return.
+##' A function for computing rolling portfolio optimization to maximize returns.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
 ##' @param total numeric. Sum of the weights.
-##' @param lower numeric. Lower boundry of the weights.
-##' @param upper numeric. Upper boundry of the weights.
+##' @param lower numeric. Lower bound of the weights.
+##' @param upper numeric. Upper bound of the weights.
 ##' @examples
 ##' @export
 roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
@@ -40,21 +40,23 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimizations to Maximize Ratio
+##' Rolling Portfolio Optimization to Maximize Ratios
 ##'
-##' A function for computing the rolling portfolio optimizations to maximize ratio
+##' A function for computing rolling portfolio optimization to maximize ratios.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
+##' @param gamma numeric. Risk aversion parameter.
 ##' @param total numeric. Sum of the weights.
-##' @param lower numeric. Lower boundry of the weights.
-##' @param upper numeric. Upper boundry of the weights.
+##' @param lower numeric. Lower bound of the weights.
+##' @param upper numeric. Upper bound of the weights.
 ##' @examples
 ##' @export
-roll_max_ratio <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
+roll_max_ratio <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
   return(.Call(`_rollport_roll_max_ratio`,
                mu,
                sigma,
+               as.numeric(gamma),
                as.numeric(total),
                as.numeric(lower),
                as.numeric(upper)

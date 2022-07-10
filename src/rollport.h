@@ -8,7 +8,7 @@
 using namespace Rcpp;
 using namespace RcppParallel;
 
-// 'Worker' function for computing the rolling optimization
+// 'Worker' function for computing rolling portfolio optimization
 struct RollMinRiskEq : public Worker {
   
   const arma::mat arma_mu;      // source
@@ -160,7 +160,7 @@ struct RollMinRiskEq : public Worker {
   
 };
 
-// 'Worker' function for computing the rolling optimization
+// 'Worker' function for computing rolling portfolio optimization
 struct RollMinRiskGeq : public Worker {
   
   const arma::mat arma_mu;      // source
@@ -313,7 +313,7 @@ struct RollMinRiskGeq : public Worker {
   
 };
 
-// 'Worker' function for computing the rolling optimization
+// 'Worker' function for computing rolling portfolio optimization
 struct RollMaxRatio : public Worker {
   
   const arma::mat arma_mu;      // source

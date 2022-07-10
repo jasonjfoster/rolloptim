@@ -1,11 +1,11 @@
 Package: rollport
 Type: Package
-Title: Rolling Portfolio Optimizations
+Title: Rolling Portfolio Optimization
 Version: 1.0
 Date: 2022-07-10
 Author: Jason Foster
 Maintainer: Jason Foster <jason.j.foster@gmail.com>
-Description: Fast and efficient computation of rolling portfolio optimizations for time-series data.
+Description: Fast and efficient computation of rolling portfolio optimization for time-series data.
 License: GPL (>= 2)
 Imports: Rcpp, RcppParallel
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel

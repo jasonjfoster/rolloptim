@@ -2,21 +2,23 @@
 % Please edit documentation in R/rollport.R
 \name{roll_max_ratio}
 \alias{roll_max_ratio}
-\title{Rolling Portfolio Optimizations to Maximize Ratio}
+\title{Rolling Portfolio Optimization to Maximize Ratios}
 \usage{
-roll_max_ratio(mu, sigma, total = 1, lower = 0, upper = 1)
+roll_max_ratio(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1)
 }
 \arguments{
 \item{mu}{matrix. Rows are returns and columns are variables.}
 
 \item{sigma}{cube. Slices are covariance matrices.}
 
+\item{gamma}{numeric. Risk aversion parameter.}
+
 \item{total}{numeric. Sum of the weights.}
 
-\item{lower}{numeric. Lower boundry of the weights.}
+\item{lower}{numeric. Lower bound of the weights.}
 
-\item{upper}{numeric. Upper boundry of the weights.}
+\item{upper}{numeric. Upper bound of the weights.}
 }
 \description{
-A function for computing the rolling portfolio optimizations to maximize ratio
+A function for computing rolling portfolio optimization to maximize ratios.
 }
