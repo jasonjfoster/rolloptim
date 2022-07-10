@@ -7,6 +7,8 @@
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
+##' @return An object of the same class and dimension as \code{mu} with the rolling
+##' portfolio optimization to minimize risks.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -41,6 +43,8 @@ roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
+##' @return An object of the same class and dimension as \code{mu} with the rolling
+##' portfolio optimization to maximize returns.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -76,6 +80,8 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
+##' @return An object of the same class and dimension as \code{mu} with the rolling
+##' portfolio optimization to maximize ratios
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 

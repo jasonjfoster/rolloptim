@@ -17,6 +17,10 @@ roll_min_risk(mu, sigma, total = 1, lower = 0, upper = 1)
 
 \item{upper}{numeric. Upper bound of the weights.}
 }
+\value{
+An object of the same class and dimension as \code{mu} with the rolling
+portfolio optimization to minimize risks.
+}
 \description{
 A function for computing rolling portfolio optimization to minimize risks.
 }
