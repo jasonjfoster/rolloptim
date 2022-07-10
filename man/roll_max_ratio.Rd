@@ -21,7 +21,7 @@ roll_max_ratio(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1)
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-portfolio optimization to maximize ratios
+portfolio optimization to maximize ratios.
 }
 \description{
 A function for computing rolling portfolio optimization to maximize ratios.
