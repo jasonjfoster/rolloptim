@@ -1,5 +1,29 @@
 #include "rollport.h"
 
+void check_rows(const int& n_rows_mu, const int& n_slices_sigma) {
+  
+  if (n_rows_mu != n_slices_sigma) {
+    stop("number of rows in 'mu' must equal the number of slices in 'sigma'");
+  }
+  
+}
+
+void check_cols(const int& n_cols_mu, const int& n_cols_sigma) {
+  
+  if (n_cols_mu != n_cols_sigma) {
+    stop("number of columns in 'mu' must equal the number of columns in 'sigma'");
+  }
+  
+}
+
+void check_sigma(const int& n_cols_sigma_x, const int& n_cols_sigma_y) {
+  
+  if (n_cols_sigma_x != n_cols_sigma_y) {
+    stop("dimensions of 'sigma' must be square");
+  }
+  
+}
+
 // [[Rcpp::export(.roll_min_risk)]]
 NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
                             const double& total, const double& lower,
@@ -7,6 +31,7 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
   arma::vec arma_lower(n_cols_mu);
@@ -14,6 +39,11 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma::vec arma_ones(n_cols_mu);
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
+  
+  // check 'mu' and 'sigma' arguments for errors
+  check_rows(n_rows_mu, dim_sigma[2]);
+  check_cols(n_cols_mu, dim_sigma[1]);
+  check_sigma(dim_sigma[0], dim_sigma[1]);
   
   arma_ones.ones();
   arma_diag.eye();
@@ -47,6 +77,7 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
   arma::vec arma_lower(n_cols_mu);
@@ -55,9 +86,10 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
-  // // check 'x' and 'y' arguments for errors
-  // check_lm(n_rows_xy, yy.nrow());
-  // check both rows and cols (remove "_mu" from names?)
+  // check 'mu' and 'sigma' arguments for errors
+  check_rows(n_rows_mu, dim_sigma[2]);
+  check_cols(n_cols_mu, dim_sigma[1]);
+  check_sigma(dim_sigma[0], dim_sigma[1]);
   
   arma_ones.ones();
   arma_diag.eye();
@@ -91,6 +123,7 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
   arma::vec arma_lower(n_cols_mu);
@@ -98,6 +131,11 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   arma::vec arma_ones(n_cols_mu);
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
+  
+  // check 'mu' and 'sigma' arguments for errors
+  check_rows(n_rows_mu, dim_sigma[2]);
+  check_cols(n_cols_mu, dim_sigma[1]);
+  check_sigma(dim_sigma[0], dim_sigma[1]);
   
   arma_ones.ones();
   arma_diag.eye();
