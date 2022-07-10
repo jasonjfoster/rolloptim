@@ -28,7 +28,7 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 mu <- roll_mean(x, 5)
 sigma <- roll_cov(x, width = 5)
 ```
-Then, to compute rolling portfolio optimization:
+Then, to compute rolling portfolio optimization, use the functions:
 
 ```r
 # rolling portfolio optimization to minimize risks

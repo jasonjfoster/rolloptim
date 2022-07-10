@@ -20,3 +20,18 @@ roll_max_return(mu, sigma, total = 1, lower = 0, upper = 1)
 \description{
 A function for computing rolling portfolio optimization to maximize returns.
 }
+\examples{
+if (requireNamespace("roll", quietly = TRUE)) {
+
+n_vars <- 3
+n_obs <- 15
+x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
+
+mu <- roll::roll_mean(x, 5)
+sigma <- roll::roll_cov(x, width = 5)
+
+# rolling portfolio optimization to maximize returns
+roll_max_return(mu, sigma)
+
+}
+}

@@ -13,3 +13,4 @@ SystemRequirements: GNU make, C++11
 Roxygen: list(old_usage = TRUE)
 RoxygenNote: 7.2.0
 Encoding: UTF-8
+Suggests: roll
