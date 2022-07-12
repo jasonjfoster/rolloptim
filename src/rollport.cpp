@@ -16,9 +16,9 @@ void check_cols(const int& n_cols_mu, const int& n_cols_sigma) {
   
 }
 
-void check_sigma(const int& n_cols_sigma_x, const int& n_cols_sigma_y) {
+void check_sigma(const int& n_rows_sigma, const int& n_cols_sigma) {
   
-  if (n_cols_sigma_x != n_cols_sigma_y) {
+  if (n_rows_sigma != n_cols_sigma) {
     stop("dimensions of 'sigma' must be square");
   }
   
@@ -41,7 +41,10 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
-  check_rows(n_rows_mu, dim_sigma[2]);
+  if (dim_sigma.size() == 3) {
+    check_rows(n_rows_mu, dim_sigma[2]);
+  }
+  
   check_cols(n_cols_mu, dim_sigma[1]);
   check_sigma(dim_sigma[0], dim_sigma[1]);
   
@@ -87,7 +90,10 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
-  check_rows(n_rows_mu, dim_sigma[2]);
+  if (dim_sigma.size() == 3) {
+    check_rows(n_rows_mu, dim_sigma[2]);
+  }
+  
   check_cols(n_cols_mu, dim_sigma[1]);
   check_sigma(dim_sigma[0], dim_sigma[1]);
   
@@ -133,7 +139,10 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
-  check_rows(n_rows_mu, dim_sigma[2]);
+  if (dim_sigma.size() == 3) {
+    check_rows(n_rows_mu, dim_sigma[2]);
+  }
+  
   check_cols(n_cols_mu, dim_sigma[1]);
   check_sigma(dim_sigma[0], dim_sigma[1]);
   

@@ -429,7 +429,7 @@ struct RollMaxRatio : public Worker {
             n_solve += 1;
             
             // objective value
-            obj = gamma * as_scalar(trans_weights * sigma * weights_subset) -
+            obj = 0.5 * gamma * as_scalar(trans_weights * sigma * weights_subset) -
               sum(mu * weights_subset);
             
             if (obj <= obj_prev) {

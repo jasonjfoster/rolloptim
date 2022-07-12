@@ -1,5 +1,7 @@
 # rollport
 
+[![](https://github.com/jjf234/rollport/workflows/R-CMD-check/badge.svg)](https://github.com/jjf234/roll/actions)
+
 ## Overview
 
 `rollport` is a package that provides fast and efficient computation of rolling portfolio optimization for time-series data.
