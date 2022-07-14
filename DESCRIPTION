@@ -13,4 +13,4 @@ SystemRequirements: GNU make, C++11
 Roxygen: list(old_usage = TRUE)
 RoxygenNote: 7.2.0
 Encoding: UTF-8
-Suggests: testthat, roll, zoo, PortfolioAnalytics, ROI, ROI.plugin.quadprog, ROI.plugin.glpk
+Suggests: testthat, roll, zoo, PortfolioAnalytics, PerformanceAnalytics, ROI, ROI.plugin.quadprog, ROI.plugin.glpk
