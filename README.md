@@ -40,8 +40,8 @@ roll_min_risk(mu, sigma)
 # rolling portfolio optimization to maximize returns
 roll_max_return(mu, sigma)
 
-# rolling portfolio optimization to maximize ratios
-roll_max_ratio(mu, sigma, gamma = 1)
+# rolling portfolio optimization to maximize utilities
+roll_max_utility(mu, sigma, gamma = 1)
 ```
 
 Note that handling of constraints is implemented by default (see the `total`, `lower`, and `upper` arguments).
