@@ -1,6 +1,6 @@
 # rollport
 
-[![](https://github.com/jjf234/rollport/workflows/R-CMD-check/badge.svg)](https://github.com/jjf234/roll/actions)
+[![](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml)
 
 ## Overview
 
@@ -42,3 +42,9 @@ roll_max_return(mu, sigma)
 # rolling portfolio optimization to maximize ratios
 roll_max_ratio(mu, sigma)
 ```
+
+Note that handling of constraints is implemented by default (see the `total`, `lower`, and `upper` arguments).
+
+## References
+
+Markowitz, H.M. (1952). "Portfolio Selection." *The Journal of Finance*, 7(1), 77–91.
