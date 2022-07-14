@@ -43,6 +43,8 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   // check 'mu' and 'sigma' arguments for errors
   if (dim_sigma.size() == 3) {
     check_rows(n_rows_mu, dim_sigma[2]);
+  } else {
+    check_rows(n_rows_mu, 1);
   }
   
   check_cols(n_cols_mu, dim_sigma[1]);
@@ -92,6 +94,8 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   // check 'mu' and 'sigma' arguments for errors
   if (dim_sigma.size() == 3) {
     check_rows(n_rows_mu, dim_sigma[2]);
+  } else {
+    check_rows(n_rows_mu, 1);
   }
   
   check_cols(n_cols_mu, dim_sigma[1]);
@@ -141,6 +145,8 @@ NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma
   // check 'mu' and 'sigma' arguments for errors
   if (dim_sigma.size() == 3) {
     check_rows(n_rows_mu, dim_sigma[2]);
+  } else {
+    check_rows(n_rows_mu, 1);
   }
   
   check_cols(n_cols_mu, dim_sigma[1]);

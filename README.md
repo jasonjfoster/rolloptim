@@ -1,6 +1,7 @@
 # rollport
 
 [![](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml)
+[![](https://codecov.io/gh/jjf234/rollport/graph/badge.svg)](https://codecov.io/github/jjf234/rollport)
 
 ## Overview
 
@@ -40,7 +41,7 @@ roll_min_risk(mu, sigma)
 roll_max_return(mu, sigma)
 
 # rolling portfolio optimization to maximize ratios
-roll_max_ratio(mu, sigma)
+roll_max_ratio(mu, sigma, gamma = 1)
 ```
 
 Note that handling of constraints is implemented by default (see the `total`, `lower`, and `upper` arguments).
