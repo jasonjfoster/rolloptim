@@ -70,9 +70,9 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimization to Maximize Utilities
+##' Rolling Portfolio Optimization to Maximize Ratios
 ##'
-##' A function for computing rolling portfolio optimization to maximize utilities.
+##' A function for computing rolling portfolio optimization to maximize ratios.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
@@ -81,7 +81,7 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimization to maximize utilities.
+##' portfolio optimization to maximize ratios
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -93,12 +93,12 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
 ##' # rolling portfolio optimization to maximize utilities
-##' roll_max_utility(mu, sigma, gamma = 1)
+##' roll_max_ratio(mu, sigma, gamma = 1)
 ##' 
 ##' }
 ##' @export
-roll_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
-  return(.Call(`_rollport_roll_max_utility`,
+roll_max_ratio <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
+  return(.Call(`_rollport_roll_max_ratio`,
                mu,
                sigma,
                as.numeric(gamma),

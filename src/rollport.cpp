@@ -126,10 +126,10 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   
 }
 
-// [[Rcpp::export(.roll_max_utility)]]
-NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sigma,
-                               const double& gamma, const double& total,
-                               const double& lower, const double& upper) {
+// [[Rcpp::export(.roll_max_ratio)]]
+NumericMatrix roll_max_ratio(const NumericMatrix& mu, const NumericVector& sigma,
+                             const double& gamma, const double& total,
+                             const double& lower, const double& upper) {
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
@@ -158,10 +158,10 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma_upper.fill(upper);
   
   // compute rolling portfolio optimization
-  RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                  gamma, total, arma_lower, arma_upper,
-                                  arma_ones, arma_diag, arma_weights);
-  parallelFor(0, n_rows_mu, roll_max_utility);
+  RollMaxRatio roll_max_ratio(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                              gamma, total, arma_lower, arma_upper,
+                              arma_ones, arma_diag, arma_weights);
+  parallelFor(0, n_rows_mu, roll_max_ratio);
   
   NumericMatrix result(wrap(arma_weights));
   List dimnames = mu.attr("dimnames");
