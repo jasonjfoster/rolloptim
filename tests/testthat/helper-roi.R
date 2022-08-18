@@ -39,7 +39,7 @@ roi_max_return <- function(x, total = 1, lower = 0, upper = 1) {
   
 }
 
-roi_max_ratio <- function(x, gamma = 1, total = 1, lower = 0, upper = 1) {
+roi_max_utility <- function(x, gamma = 1, total = 1, lower = 0, upper = 1) {
   
   port_spec <- PortfolioAnalytics::portfolio.spec(colnames(x))
   port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "weight_sum", min_sum = total, max_sum = total)

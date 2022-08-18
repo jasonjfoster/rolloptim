@@ -314,7 +314,7 @@ struct RollMaxReturn : public Worker {
 };
 
 // 'Worker' function for computing rolling portfolio optimization
-struct RollMaxRatio : public Worker {
+struct RollMaxUtility : public Worker {
   
   const arma::mat arma_mu;      // source
   const arma::cube arma_sigma;
@@ -329,12 +329,12 @@ struct RollMaxRatio : public Worker {
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
-  RollMaxRatio(const arma::mat arma_mu, const arma::cube arma_sigma,
-               const int n_rows_mu, const int n_cols_mu,
-               const double gamma, const double total,
-               const arma::vec arma_lower, const arma::vec arma_upper,
-               const arma::vec arma_ones, const arma::mat arma_diag,
-               arma::mat& arma_weights)
+  RollMaxUtility(const arma::mat arma_mu, const arma::cube arma_sigma,
+                 const int n_rows_mu, const int n_cols_mu,
+                 const double gamma, const double total,
+                 const arma::vec arma_lower, const arma::vec arma_upper,
+                 const arma::vec arma_ones, const arma::mat arma_diag,
+                 arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
       gamma(gamma), total(total),

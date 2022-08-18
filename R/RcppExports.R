@@ -9,7 +9,7 @@
     .Call(`_rollport_roll_max_return`, mu, sigma, total, lower, upper)
 }
 
-.roll_max_ratio <- function(mu, sigma, gamma, total, lower, upper) {
-    .Call(`_rollport_roll_max_ratio`, mu, sigma, gamma, total, lower, upper)
+.roll_max_utility <- function(mu, sigma, gamma, total, lower, upper) {
+    .Call(`_rollport_roll_max_utility`, mu, sigma, gamma, total, lower, upper)
 }
 

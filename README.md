@@ -34,14 +34,14 @@ sigma <- roll_cov(x, width = 5)
 Then, to compute rolling portfolio optimization, use the functions:
 
 ```r
-# rolling portfolio optimization to minimize risks
+# rolling portfolio optimization to minimize risk
 roll_min_risk(mu, sigma)
 
-# rolling portfolio optimization to maximize returns
+# rolling portfolio optimization to maximize return
 roll_max_return(mu, sigma)
 
-# rolling portfolio optimization to maximize ratios
-roll_max_ratio(mu, sigma, gamma = 1)
+# rolling portfolio optimization to maximize utility
+roll_max_utility(mu, sigma, gamma = 1)
 ```
 
 Note that handling of constraints is implemented by default (see the `total`, `lower`, and `upper` arguments).

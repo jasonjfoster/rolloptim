@@ -2,7 +2,7 @@
 % Please edit documentation in R/rollport.R
 \name{roll_max_return}
 \alias{roll_max_return}
-\title{Rolling Portfolio Optimization to Maximize Returns}
+\title{Rolling Portfolio Optimization to Maximize Return}
 \usage{
 roll_max_return(mu, sigma, total = 1, lower = 0, upper = 1)
 }
@@ -19,10 +19,10 @@ roll_max_return(mu, sigma, total = 1, lower = 0, upper = 1)
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-portfolio optimization to maximize returns.
+portfolio optimization to maximize return.
 }
 \description{
-A function for computing rolling portfolio optimization to maximize returns.
+A function for computing rolling portfolio optimization to maximize return.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {
@@ -34,7 +34,7 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 mu <- roll::roll_mean(x, 5)
 sigma <- roll::roll_cov(x, width = 5)
 
-# rolling portfolio optimization to maximize returns
+# rolling portfolio optimization to maximize return
 roll_max_return(mu, sigma)
 
 }
