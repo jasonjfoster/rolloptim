@@ -1,7 +1,7 @@
 # rollport
 
 [![](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml)
-[![](https://codecov.io/gh/jjf234/rollport/graph/badge.svg)](https://codecov.io/github/jjf234/rollport)
+[![](https://app.codecov.io/gh/jjf234/rollport/graph/badge.svg)](https://app.codecov.io/github/jjf234/rollport)
 
 ## Overview
 
