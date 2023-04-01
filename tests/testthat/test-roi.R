@@ -24,7 +24,7 @@ test_that("equivalent to PortfolioAnalytics::optimize.portfolio", {
   
   # rolling portfolio optimization to maximize utility
   expect_equal(roll_max_utility(test_mu, test_sigma, test_gamma),
-               zoo::rollapplyr(test_x, width = test_width, roi_max_utility, gamma = test_gamma, by.column = FALSE),
+               zoo::rollapplyr(test_x, width = test_width, roi_max_utility, gamma = test_gamma / 2, by.column = FALSE),
                check.attributes = FALSE)
   
 })
