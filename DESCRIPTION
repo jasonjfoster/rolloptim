@@ -9,7 +9,7 @@ Description: Fast and efficient computation of rolling portfolio optimization fo
 License: GPL (>= 2)
 Imports: Rcpp, RcppParallel
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel
-SystemRequirements: GNU make, C++11
+SystemRequirements: GNU make
 Roxygen: list(old_usage = TRUE)
 RoxygenNote: 7.2.1
 Encoding: UTF-8
