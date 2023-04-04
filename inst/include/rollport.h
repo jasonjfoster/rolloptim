@@ -8,6 +8,8 @@
 using namespace Rcpp;
 using namespace RcppParallel;
 
+namespace rollport {
+
 // 'Worker' function for computing rolling portfolio optimization
 struct RollMinRisk : public Worker {
   
@@ -459,5 +461,7 @@ struct RollMaxUtility : public Worker {
   }
   
 };
+
+}
 
 #endif

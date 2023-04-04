@@ -56,9 +56,9 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma_upper.fill(upper);
   
   // compute rolling portfolio optimization
-  RollMinRisk roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                            total, arma_lower, arma_upper,
-                            arma_ones, arma_diag, arma_weights);
+  rollport::RollMinRisk roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                                      total, arma_lower, arma_upper,
+                                      arma_ones, arma_diag, arma_weights);
   parallelFor(0, n_rows_mu, roll_min_risk);
   
   NumericMatrix result(wrap(arma_weights));
@@ -107,9 +107,9 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma_upper.fill(upper);
   
   // compute rolling portfolio optimization
-  RollMaxReturn roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                total, arma_lower, arma_upper,
-                                arma_ones, arma_diag, arma_weights);
+  rollport::RollMaxReturn roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                                          total, arma_lower, arma_upper,
+                                          arma_ones, arma_diag, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_return);
   
   NumericMatrix result(wrap(arma_weights));
@@ -158,9 +158,9 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma_upper.fill(upper);
   
   // compute rolling portfolio optimization
-  RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                  gamma, total, arma_lower, arma_upper,
-                                  arma_ones, arma_diag, arma_weights);
+  rollport::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                                            gamma, total, arma_lower, arma_upper,
+                                            arma_ones, arma_diag, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_utility);
   
   NumericMatrix result(wrap(arma_weights));
