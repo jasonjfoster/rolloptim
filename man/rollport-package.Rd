@@ -9,7 +9,7 @@
 \packageDescription{rollport}
 }
 \details{
-\code{rollport} is a package that provides fast and efficient computation of rolling portfolio optimization for time-series data.
+\code{rollport} is a package that provides analytical computation of rolling portfolio optimization for time-series data.
 }
 \author{
 \packageAuthor{rollport}
