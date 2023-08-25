@@ -55,7 +55,7 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling portfolio optimization
+  // compute rolling portfolio optimizations
   rollport::RollMinRisk roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                                       total, arma_lower, arma_upper,
                                       arma_ones, arma_diag, arma_weights);
@@ -106,7 +106,7 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling portfolio optimization
+  // compute rolling portfolio optimizations
   rollport::RollMaxReturn roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                                           total, arma_lower, arma_upper,
                                           arma_ones, arma_diag, arma_weights);
@@ -157,7 +157,7 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
-  // compute rolling portfolio optimization
+  // compute rolling portfolio optimizations
   rollport::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
                                             gamma, total, arma_lower, arma_upper,
                                             arma_ones, arma_diag, arma_weights);

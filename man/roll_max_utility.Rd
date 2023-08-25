@@ -2,7 +2,7 @@
 % Please edit documentation in R/rollport.R
 \name{roll_max_utility}
 \alias{roll_max_utility}
-\title{Rolling Portfolio Optimization to Maximize Utility}
+\title{Rolling Portfolio Optimizations to Maximize Utility}
 \usage{
 roll_max_utility(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1)
 }
@@ -21,10 +21,10 @@ roll_max_utility(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1)
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-portfolio optimization to maximize utility.
+portfolio optimizations to maximize utility.
 }
 \description{
-A function for computing rolling portfolio optimization to maximize utility.
+A function for computing rolling portfolio optimizations to maximize utility.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {
@@ -36,7 +36,7 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 mu <- roll::roll_mean(x, 5)
 sigma <- roll::roll_cov(x, width = 5)
 
-# rolling portfolio optimization to maximize utility
+# rolling portfolio optimizations to maximize utility
 roll_max_utility(mu, sigma, gamma = 1)
 
 }

@@ -10,7 +10,7 @@ using namespace RcppParallel;
 
 namespace rollport {
 
-// 'Worker' function for computing rolling portfolio optimization
+// 'Worker' function for computing the rolling portfolio optimization
 struct RollMinRisk : public Worker {
   
   const arma::mat arma_mu;      // source
@@ -163,7 +163,7 @@ struct RollMinRisk : public Worker {
   
 };
 
-// 'Worker' function for computing rolling portfolio optimization
+// 'Worker' function for computing the rolling portfolio optimization
 struct RollMaxReturn : public Worker {
   
   const arma::mat arma_mu;      // source
@@ -315,7 +315,7 @@ struct RollMaxReturn : public Worker {
   
 };
 
-// 'Worker' function for computing rolling portfolio optimization
+// 'Worker' function for computing the rolling portfolio optimization
 struct RollMaxUtility : public Worker {
   
   const arma::mat arma_mu;      // source

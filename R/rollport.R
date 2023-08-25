@@ -1,6 +1,6 @@
-##' Rolling Portfolio Optimization to Minimize Risk
+##' Rolling Portfolio Optimizations to Minimize Risk
 ##'
-##' A function for computing rolling portfolio optimization to minimize risk.
+##' A function for computing rolling portfolio optimizations to minimize risk.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
@@ -8,7 +8,7 @@
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimization to minimize risk.
+##' portfolio optimizations to minimize risk.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -19,7 +19,7 @@
 ##' mu <- roll::roll_mean(x, 5)
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimization to minimize risk
+##' # rolling portfolio optimizations to minimize risk
 ##' roll_min_risk(mu, sigma)
 ##' 
 ##' }
@@ -34,9 +34,9 @@ roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimization to Maximize Return
+##' Rolling Portfolio Optimizations to Maximize Return
 ##'
-##' A function for computing rolling portfolio optimization to maximize return.
+##' A function for computing rolling portfolio optimizations to maximize return.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
@@ -44,7 +44,7 @@ roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimization to maximize return.
+##' portfolio optimizations to maximize return.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -55,7 +55,7 @@ roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' mu <- roll::roll_mean(x, 5)
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimization to maximize return
+##' # rolling portfolio optimizations to maximize return
 ##' roll_max_return(mu, sigma)
 ##' 
 ##' }
@@ -70,9 +70,9 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimization to Maximize Utility
+##' Rolling Portfolio Optimizations to Maximize Utility
 ##'
-##' A function for computing rolling portfolio optimization to maximize utility.
+##' A function for computing rolling portfolio optimizations to maximize utility.
 ##' 
 ##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
@@ -81,7 +81,7 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimization to maximize utility.
+##' portfolio optimizations to maximize utility.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -92,7 +92,7 @@ roll_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
 ##' mu <- roll::roll_mean(x, 5)
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimization to maximize utility
+##' # rolling portfolio optimizations to maximize utility
 ##' roll_max_utility(mu, sigma, gamma = 1)
 ##' 
 ##' }

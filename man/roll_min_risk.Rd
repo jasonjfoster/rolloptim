@@ -2,7 +2,7 @@
 % Please edit documentation in R/rollport.R
 \name{roll_min_risk}
 \alias{roll_min_risk}
-\title{Rolling Portfolio Optimization to Minimize Risk}
+\title{Rolling Portfolio Optimizations to Minimize Risk}
 \usage{
 roll_min_risk(mu, sigma, total = 1, lower = 0, upper = 1)
 }
@@ -19,10 +19,10 @@ roll_min_risk(mu, sigma, total = 1, lower = 0, upper = 1)
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-portfolio optimization to minimize risk.
+portfolio optimizations to minimize risk.
 }
 \description{
-A function for computing rolling portfolio optimization to minimize risk.
+A function for computing rolling portfolio optimizations to minimize risk.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {
@@ -34,7 +34,7 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 mu <- roll::roll_mean(x, 5)
 sigma <- roll::roll_cov(x, width = 5)
 
-# rolling portfolio optimization to minimize risk
+# rolling portfolio optimizations to minimize risk
 roll_min_risk(mu, sigma)
 
 }
