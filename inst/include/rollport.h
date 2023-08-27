@@ -42,6 +42,7 @@ struct RollMinRisk : public Worker {
       
       int n_solve = 0;
       int n_size = n_cols_mu;
+      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu + 1);
       long double target = -arma::datum::inf;
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
@@ -91,27 +92,26 @@ struct RollMinRisk : public Worker {
       A(lower_tri) = A_trans(lower_tri);
       
       // number of index combinations
-      for (int j = 0; j < pow((long double)2.0, (long double)2.0 * n_cols_mu + 1); j++) {
+      for (int j = 0; j < n_combn; j++) {
         
-        n_size = n_cols_mu + 1;
-        arma::uvec arma_ix = arma::linspace<arma::uvec>(0, n_size - 1, n_size);
+        n_size = j;
+        arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu + 1);
+        arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the index combination
         for (int k = 0; k < 2 * n_cols_mu + 1; k++) {
           
-          if (!(j & (int)pow((long double)2.0, k))) {
-            
-            n_size += 1;
-            
-            arma_ix.resize(n_size);
-            arma_ix(n_size - 1) = n_cols_mu + 1 + k;
-            
+          if (n_size % 2 == 0) {
+            arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
           }
+          
+          n_size /= 2;
           
         }
         
-        arma::mat A_subset = A(arma_ix, arma_ix);
-        arma::vec b_subset = b(arma_ix);
+        arma::uvec arma_ix_subset = find(arma_ix);
+        arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
+        arma::vec b_subset = b(arma_ix_subset);
         
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
@@ -195,6 +195,7 @@ struct RollMaxReturn : public Worker {
       
       int n_solve = 0;
       int n_size = n_cols_mu;
+      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
       long double target = max(arma_mu.row(i));
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
@@ -244,27 +245,26 @@ struct RollMaxReturn : public Worker {
       A(lower_tri) = A_trans(lower_tri);
       
       // number of index combinations
-      for (int j = 0; j < pow((long double)2.0, (long double)2.0 * n_cols_mu); j++) {
+      for (int j = 0; j < n_combn; j++) {
         
-        n_size = n_cols_mu + 2;
-        arma::uvec arma_ix = arma::linspace<arma::uvec>(0, n_size - 1, n_size);
+        n_size = j;
+        arma::uvec arma_ix(n_cols_mu + 2 + 2 * n_cols_mu);
+        arma_ix.subvec(0, n_cols_mu + 1) = arma::linspace<arma::uvec>(1, n_cols_mu + 2, n_cols_mu + 2);
         
         // find the index combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
           
-          if (!(j & (int)pow((long double)2.0, k))) {
-            
-            n_size += 1;
-            
-            arma_ix.resize(n_size);
-            arma_ix(n_size - 1) = n_cols_mu + 2 + k;
-            
+          if (n_size % 2 == 0) {
+            arma_ix[n_cols_mu + 2 + k] = n_cols_mu + 2 + k;
           }
+          
+          n_size /= 2;
           
         }
         
-        arma::mat A_subset = A(arma_ix, arma_ix);
-        arma::vec b_subset = b(arma_ix);
+        arma::uvec arma_ix_subset = find(arma_ix);
+        arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
+        arma::vec b_subset = b(arma_ix_subset);
         
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
@@ -350,6 +350,7 @@ struct RollMaxUtility : public Worker {
       
       int n_solve = 0;
       int n_size = n_cols_mu;
+      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
@@ -390,27 +391,26 @@ struct RollMaxUtility : public Worker {
       A(lower_tri) = A_trans(lower_tri);
       
       // number of index combinations
-      for (int j = 0; j < pow((long double)2.0, (long double)2.0 * n_cols_mu); j++) {
+      for (int j = 0; j < n_combn; j++) {
         
-        n_size = n_cols_mu + 1;
-        arma::uvec arma_ix = arma::linspace<arma::uvec>(0, n_size - 1, n_size);
+        n_size = j;
+        arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu);
+        arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the index combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
           
-          if (!(j & (int)pow((long double)2.0, k))) {
-            
-            n_size += 1;
-            
-            arma_ix.resize(n_size);
-            arma_ix(n_size - 1) = n_cols_mu + 1 + k;
-            
+          if (n_size % 2 == 0) {
+            arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
           }
+          
+          n_size /= 2;
           
         }
         
-        arma::mat A_subset = A(arma_ix, arma_ix);
-        arma::vec b_subset = b(arma_ix);
+        arma::uvec arma_ix_subset = find(arma_ix);
+        arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
+        arma::vec b_subset = b(arma_ix_subset);
         
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
