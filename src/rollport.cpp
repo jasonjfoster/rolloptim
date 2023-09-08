@@ -31,6 +31,7 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  int n_size = n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu;
   IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
@@ -38,6 +39,8 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma::vec arma_upper(n_cols_mu);
   arma::vec arma_ones(n_cols_mu);
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
+  arma::mat arma_A(n_size, n_size);
+  arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
@@ -55,10 +58,30 @@ NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma,
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
+  // total constraint
+  arma_A.submat(n_cols_mu, 0, n_cols_mu, n_cols_mu - 1) = trans(arma_ones);
+  arma_A.submat(0, n_cols_mu, n_cols_mu - 1, n_cols_mu) = arma_ones;
+  arma_b(n_cols_mu) = total;
+  
+  // lower constraints
+  arma_A.submat(n_cols_mu + 1 + 1, 0,
+                n_cols_mu + 1 + 1 + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1 + 1,
+                n_cols_mu - 1, n_cols_mu + 1 + 1 + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1 + 1, n_cols_mu + 1 + 1 + n_cols_mu - 1) = arma_lower;
+  
+  // upper constraints
+  arma_A.submat(n_cols_mu + 1 + 1 + n_cols_mu, 0,
+                n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1 + 1 + n_cols_mu,
+                n_cols_mu - 1, n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1 + 1 + n_cols_mu,
+                n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
+  
   // compute rolling portfolio optimizations
   rollport::RollMinRisk roll_min_risk(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                      total, arma_lower, arma_upper,
-                                      arma_ones, arma_diag, arma_weights);
+                                      total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                      arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_min_risk);
   
   NumericMatrix result(wrap(arma_weights));
@@ -82,6 +105,7 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  int n_size = n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu;
   IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
@@ -89,6 +113,8 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma::vec arma_upper(n_cols_mu);
   arma::vec arma_ones(n_cols_mu);
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
+  arma::mat arma_A(n_size, n_size);
+  arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
@@ -106,10 +132,30 @@ NumericMatrix roll_max_return(const NumericMatrix& mu, const NumericVector& sigm
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
+  // total constraint
+  arma_A.submat(n_cols_mu, 0, n_cols_mu, n_cols_mu - 1) = trans(arma_ones);
+  arma_A.submat(0, n_cols_mu, n_cols_mu - 1, n_cols_mu) = arma_ones;
+  arma_b(n_cols_mu) = total;
+  
+  // lower constraints
+  arma_A.submat(n_cols_mu + 1 + 1, 0,
+                n_cols_mu + 1 + 1 + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1 + 1,
+                n_cols_mu - 1, n_cols_mu + 1 + 1 + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1 + 1, n_cols_mu + 1 + 1 + n_cols_mu - 1) = arma_lower;
+  
+  // upper constraints
+  arma_A.submat(n_cols_mu + 1 + 1 + n_cols_mu, 0,
+                n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1 + 1 + n_cols_mu,
+                n_cols_mu - 1, n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1 + 1 + n_cols_mu,
+                n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
+  
   // compute rolling portfolio optimizations
   rollport::RollMaxReturn roll_max_return(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                          total, arma_lower, arma_upper,
-                                          arma_ones, arma_diag, arma_weights);
+                                          total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                          arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_return);
   
   NumericMatrix result(wrap(arma_weights));
@@ -133,6 +179,7 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   
   int n_rows_mu = mu.nrow();
   int n_cols_mu = mu.ncol();
+  int n_size = n_cols_mu + 1 + n_cols_mu + n_cols_mu;
   IntegerVector dim_sigma = sigma.attr("dim");
   arma::mat arma_mu(mu.begin(), n_rows_mu, n_cols_mu);
   arma::cube arma_sigma(sigma.begin(), n_cols_mu, n_cols_mu, n_rows_mu);
@@ -140,6 +187,8 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::vec arma_upper(n_cols_mu);
   arma::vec arma_ones(n_cols_mu);
   arma::mat arma_diag(n_cols_mu, n_cols_mu);
+  arma::mat arma_A(n_size, n_size);
+  arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows_mu, n_cols_mu);
   
   // check 'mu' and 'sigma' arguments for errors
@@ -157,10 +206,30 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma_lower.fill(lower);
   arma_upper.fill(upper);
   
+  // total constraint
+  arma_A.submat(n_cols_mu, 0, n_cols_mu, n_cols_mu - 1) = trans(arma_ones);
+  arma_A.submat(0, n_cols_mu, n_cols_mu - 1, n_cols_mu) = arma_ones;
+  arma_b(n_cols_mu) = total;
+  
+  // lower constraints
+  arma_A.submat(n_cols_mu + 1, 0,
+                n_cols_mu + 1 + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1,
+                n_cols_mu - 1, n_cols_mu + 1 + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1, n_cols_mu + 1 + n_cols_mu - 1) = arma_lower;
+  
+  // upper constraints
+  arma_A.submat(n_cols_mu + 1 + n_cols_mu, 0,
+                n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1, n_cols_mu - 1) = arma_diag;
+  arma_A.submat(0, n_cols_mu + 1 + n_cols_mu,
+                n_cols_mu - 1, n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1) = arma_diag;
+  arma_b.subvec(n_cols_mu + 1 + n_cols_mu,
+                n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
+  
   // compute rolling portfolio optimizations
   rollport::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                            gamma, total, arma_lower, arma_upper,
-                                            arma_ones, arma_diag, arma_weights);
+                                            gamma, total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                            arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_utility);
   
   NumericMatrix result(wrap(arma_weights));

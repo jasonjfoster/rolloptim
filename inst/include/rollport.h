@@ -22,6 +22,8 @@ struct RollMinRisk : public Worker {
   const arma::vec arma_upper;
   const arma::vec arma_ones;
   const arma::mat arma_diag;
+  const arma::mat arma_A;
+  const arma::vec arma_b;
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
@@ -29,67 +31,38 @@ struct RollMinRisk : public Worker {
               const int n_rows_mu, const int n_cols_mu,
               const double total, const arma::vec arma_lower,
               const arma::vec arma_upper, const arma::vec arma_ones,
-              const arma::mat arma_diag, arma::mat& arma_weights)
+              const arma::mat arma_diag, const arma::mat arma_A,
+              const arma::vec arma_b, arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
       total(total), arma_lower(arma_lower),
       arma_upper(arma_upper), arma_ones(arma_ones),
-      arma_diag(arma_diag), arma_weights(arma_weights) { }
+      arma_diag(arma_diag), arma_A(arma_A),
+      arma_b(arma_b), arma_weights(arma_weights) { }
   
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
+      int n_size = 0;
       int n_solve = 0;
-      int n_size = n_cols_mu;
       int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu + 1);
       long double target = -arma::datum::inf;
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);
-      arma::mat A = sigma;
-      arma::vec b(n_size);
-      arma::vec weights(n_size);
+      arma::mat A(arma_A.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu,
+                  n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      arma::vec b(arma_b.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      arma::vec weights(n_cols_mu);
       
-      // total constraint
-      n_size += 1;
-      
-      A = join_rows(A, arma_ones);
-      
-      b.resize(n_size);
-      b(n_size - 1) = total;
+      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = sigma;
       
       // target constraint
-      n_size += 1;
-      
-      A = join_rows(A, trans(mu));
-      
-      b.resize(n_size);
-      b(n_size - 1) = target;
-      
-      // lower constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_lower;
-      
-      // upper constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_upper;
-      
-      A.resize(n_size, n_size);
-      
-      // coefficients matrix is symmetric
-      arma::mat A_trans = trans(A);
-      arma::uvec lower_tri = trimatl_ind(size(A));
-      A(lower_tri) = A_trans(lower_tri);
+      A.submat(n_cols_mu + 1, 0, n_cols_mu + 1, n_cols_mu - 1) = mu;
+      A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
+      b(n_cols_mu + 1) = target;
       
       // number of index combinations
       for (int j = 0; j < n_combn; j++) {
@@ -175,6 +148,8 @@ struct RollMaxReturn : public Worker {
   const arma::vec arma_upper;
   const arma::vec arma_ones;
   const arma::mat arma_diag;
+  const arma::mat arma_A;
+  const arma::vec arma_b;
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
@@ -182,67 +157,38 @@ struct RollMaxReturn : public Worker {
                 const int n_rows_mu, const int n_cols_mu,
                 const double total, const arma::vec arma_lower,
                 const arma::vec arma_upper, const arma::vec arma_ones,
-                const arma::mat arma_diag, arma::mat& arma_weights)
+                const arma::mat arma_diag, const arma::mat arma_A,
+                const arma::vec arma_b, arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
       total(total), arma_lower(arma_lower),
       arma_upper(arma_upper), arma_ones(arma_ones),
-      arma_diag(arma_diag), arma_weights(arma_weights) { }
+      arma_diag(arma_diag), arma_A(arma_A),
+      arma_b(arma_b), arma_weights(arma_weights) { }
   
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
+      int n_size = 0;
       int n_solve = 0;
-      int n_size = n_cols_mu;
       int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
       long double target = max(arma_mu.row(i));
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);
-      arma::mat A = sigma;
-      arma::vec b(n_size);
-      arma::vec weights(n_size);
+      arma::mat A(arma_A.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu,
+                  n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      arma::vec b(arma_b.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      arma::vec weights(n_cols_mu);
       
-      // total constraint
-      n_size += 1;
-      
-      A = join_rows(A, arma_ones);
-      
-      b.resize(n_size);
-      b(n_size - 1) = total;
+      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = sigma;
       
       // target constraint
-      n_size += 1;
-      
-      A = join_rows(A, trans(mu));
-      
-      b.resize(n_size);
-      b(n_size - 1) = target;
-      
-      // lower constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_lower;
-      
-      // upper constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_upper;
-      
-      A.resize(n_size, n_size);
-      
-      // coefficients matrix is symmetric
-      arma::mat A_trans = trans(A);
-      arma::uvec lower_tri = trimatl_ind(size(A));
-      A(lower_tri) = A_trans(lower_tri);
+      A.submat(n_cols_mu + 1, 0, n_cols_mu + 1, n_cols_mu - 1) = mu;
+      A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
+      b(n_cols_mu + 1) = target;
       
       // number of index combinations
       for (int j = 0; j < n_combn; j++) {
@@ -328,6 +274,8 @@ struct RollMaxUtility : public Worker {
   const arma::vec arma_upper;
   const arma::vec arma_ones;
   const arma::mat arma_diag;
+  const arma::mat arma_A;
+  const arma::vec arma_b;
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
@@ -336,59 +284,33 @@ struct RollMaxUtility : public Worker {
                  const double gamma, const double total,
                  const arma::vec arma_lower, const arma::vec arma_upper,
                  const arma::vec arma_ones, const arma::mat arma_diag,
+                 const arma::mat arma_A, const arma::vec arma_b,
                  arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
       gamma(gamma), total(total),
       arma_lower(arma_lower), arma_upper(arma_upper),
       arma_ones(arma_ones), arma_diag(arma_diag),
+      arma_A(arma_A), arma_b(arma_b),
       arma_weights(arma_weights) { }
   
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
+      int n_size = 0;
       int n_solve = 0;
-      int n_size = n_cols_mu;
       int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);
-      arma::mat A = gamma * sigma;
-      arma::vec b = trans(mu);
-      arma::vec weights(n_size);
+      arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
+                  n_cols_mu + 1 + n_cols_mu + n_cols_mu);
+      arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
+      arma::vec weights(n_cols_mu);
       
-      // total constraint
-      n_size += 1;
-      
-      A = join_rows(A, arma_ones);
-      
-      b.resize(n_size);
-      b(n_size - 1) = total;
-      
-      // lower constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_lower;
-      
-      // upper constraints
-      n_size += n_cols_mu;
-      
-      A = join_rows(A, arma_diag);
-      
-      b.resize(n_size);
-      b.subvec(n_size - n_cols_mu, n_size - 1) = arma_upper;
-      
-      A.resize(n_size, n_size);
-      
-      // coefficients matrix is symmetric
-      arma::mat A_trans = trans(A);
-      arma::uvec lower_tri = trimatl_ind(size(A));
-      A(lower_tri) = A_trans(lower_tri);
+      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = gamma * sigma;
       
       // number of index combinations
       for (int j = 0; j < n_combn; j++) {
