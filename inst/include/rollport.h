@@ -64,14 +64,14 @@ struct RollMinRisk : public Worker {
       A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
       b(n_cols_mu + 1) = target;
       
-      // number of index combinations
+      // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
         n_size = j;
         arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu + 1);
         arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
-        // find the index combination
+        // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu + 1; k++) {
           
           if (n_size % 2 == 0) {
@@ -190,14 +190,14 @@ struct RollMaxReturn : public Worker {
       A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
       b(n_cols_mu + 1) = target;
       
-      // number of index combinations
+      // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
         n_size = j;
         arma::uvec arma_ix(n_cols_mu + 2 + 2 * n_cols_mu);
         arma_ix.subvec(0, n_cols_mu + 1) = arma::linspace<arma::uvec>(1, n_cols_mu + 2, n_cols_mu + 2);
         
-        // find the index combination
+        // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
           
           if (n_size % 2 == 0) {
@@ -312,14 +312,14 @@ struct RollMaxUtility : public Worker {
       
       A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = gamma * sigma;
       
-      // number of index combinations
+      // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
         n_size = j;
         arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu);
         arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
-        // find the index combination
+        // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
           
           if (n_size % 2 == 0) {
