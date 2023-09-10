@@ -12,10 +12,6 @@ test_that("equivalent to PortfolioAnalytics::optimize.portfolio", {
     
   }
   
-  # GitHub > Actions: ubuntu-latest (devel)
-  # Error in `crossprod(weights, moments$var)`: "crossprod" is not a BUILTIN function
-  skip_on_os("linux")
-  
   # test arguments
   n_vars <- 3
   n_obs <- 15
