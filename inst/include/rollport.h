@@ -310,7 +310,8 @@ struct RollMaxUtility : public Worker {
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec weights(n_cols_mu);
       
-      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = gamma * sigma;
+      b.subvec(0, n_cols_mu - 1) = trans(mu);
+      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = sigma;
       
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
