@@ -15,4 +15,4 @@ SystemRequirements: GNU make
 Roxygen: list(old_usage = TRUE)
 RoxygenNote: 7.2.3
 Encoding: UTF-8
-Suggests: covr, testthat, zoo, roll, PortfolioAnalytics, PerformanceAnalytics, ROI, ROI.plugin.quadprog, ROI.plugin.glpk
+Suggests: covr, testthat, zoo, roll, ROI, ROI.plugin.quadprog, ROI.plugin.glpk, CVXR

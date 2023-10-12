@@ -100,8 +100,9 @@ struct RollMinRisk : public Worker {
           arma::mat trans_weights = trans(weights_subset);
           
           // check if constraints are satisfied
-          if (all(weights_subset >= arma_lower[0]) && all(weights_subset <= arma_upper[0]) &&
-              (sum(mu * weights_subset) >= target)) {
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+            (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps)) && 
+            (sum(mu * weights_subset) >= target)) {
             
             n_solve += 1;
             
@@ -226,7 +227,8 @@ struct RollMaxReturn : public Worker {
           arma::mat trans_weights = trans(weights_subset);
           
           // check if constraints are satisfied
-          if (all(weights_subset >= arma_lower[0]) && all(weights_subset <= arma_upper[0])) {
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             n_solve += 1;
             
@@ -349,7 +351,8 @@ struct RollMaxUtility : public Worker {
           arma::mat trans_weights = trans(weights_subset);
           
           // check if constraints are satisfied
-          if (all(weights_subset >= arma_lower[0]) && all(weights_subset <= arma_upper[0])) {
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             n_solve += 1;
             

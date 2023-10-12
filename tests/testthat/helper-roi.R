@@ -1,55 +1,58 @@
-# Error in `get(as.character(FUN), mode = "function", envir = envir)`:
-# object 'set.portfolio.moments' of mode 'function' was not found
-port_moments <- function(R) {
+roi_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   
-  result <- list()
+  mu <- zoo::coredata(mu)
   
-  result$mu <- colMeans(R)
-  result$sigma <- cov(R)
+  n_cols_mu <- ncol(mu)
   
-  return(result)
+  objective <- ROI::Q_objective(Q = 2 * sigma,
+                                L = rep(0, n_cols_mu))
+  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_mu), rep(1, n_cols_mu), rep(1, n_cols_mu)),
+                                   dir = c("==", ">=", "<="),
+                                   rhs = c(total, lower, upper))
   
-}
-
-roi_min_risk <- function(x, total = 1, lower = 0, upper = 1) {
+  problem <- ROI::OP(objective, constraints)
   
-  port_spec <- PortfolioAnalytics::portfolio.spec(colnames(x))
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "weight_sum", min_sum = total, max_sum = total)
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "box", min = lower, max = upper)
-  port_spec <- PortfolioAnalytics::add.objective(portfolio = port_spec, type = "risk", name = "var")
+  result <- ROI::ROI_solve(problem, solver = "quadprog")
   
-  result <- PortfolioAnalytics::optimize.portfolio(x, portfolio = port_spec, optimize_method = "ROI",
-                                                   momentFUN = "port_moments")$weights
-  
-  return(result)
+  return(ROI::solution(result))
   
 }
 
-roi_max_return <- function(x, total = 1, lower = 0, upper = 1) {
+roi_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
   
-  port_spec <- PortfolioAnalytics::portfolio.spec(colnames(x))
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "weight_sum", min_sum = total, max_sum = total)
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "box", min = lower, max = upper)
-  port_spec <- PortfolioAnalytics::add.objective(portfolio = port_spec, type = "return", name = "mean")
+  mu <- zoo::coredata(mu)
   
-  result <- PortfolioAnalytics::optimize.portfolio(x, portfolio = port_spec, optimize_method = "ROI",
-                                                   momentFUN = "port_moments")$weights
+  n_cols_mu <- ncol(mu)
   
-  return(result)
+  objective <- ROI::L_objective(L = -mu)
+  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_mu), rep(1, n_cols_mu), rep(1, n_cols_mu)),
+                                   dir = c("==", ">=", "<="),
+                                   rhs = c(total, lower, upper))
+  
+  problem <- ROI::OP(objective, constraints)
+  
+  result <- ROI::ROI_solve(problem, solver = "glpk")
+  
+  return(ROI::solution(result))
   
 }
 
-roi_max_utility <- function(x, gamma = 1, total = 1, lower = 0, upper = 1) {
+roi_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
   
-  port_spec <- PortfolioAnalytics::portfolio.spec(colnames(x))
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "weight_sum", min_sum = total, max_sum = total)
-  port_spec <- PortfolioAnalytics::add.constraint(portfolio = port_spec, type = "box", min = lower, max = upper)
-  port_spec <- PortfolioAnalytics::add.objective(portfolio = port_spec, type = "return", name = "mean")
-  port_spec <- PortfolioAnalytics::add.objective(portfolio = port_spec, type = "risk", name = "var", risk_aversion = gamma)
+  mu <- zoo::coredata(mu)
   
-  result <- PortfolioAnalytics::optimize.portfolio(x, portfolio = port_spec, optimize_method = "ROI",
-                                                   momentFUN = "port_moments")$weights
+  n_cols_mu <- ncol(mu)
   
-  return(result)
+  objective <- ROI::Q_objective(Q = gamma * sigma,
+                                L = -mu)
+  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_mu), rep(1, n_cols_mu), rep(1, n_cols_mu)),
+                                   dir = c("==", ">=", "<="),
+                                   rhs = c(total, lower, upper))
+  
+  problem <- ROI::OP(objective, constraints)
+  
+  result <- ROI::ROI_solve(problem, solver = "quadprog")
+  
+  return(ROI::solution(result))
   
 }
