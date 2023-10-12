@@ -1,4 +1,4 @@
-test_that("equivalent to CVXR::ROI_solve", {
+test_that("equivalent to CVXR::solve", {
   
   skip("long-running test")
   
