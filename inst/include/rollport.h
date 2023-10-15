@@ -46,33 +46,27 @@ struct RollMinRisk : public Worker {
       
       int n_size = 0;
       int n_solve = 0;
-      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu + 1);
-      long double target = -arma::datum::inf;
+      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
-      arma::mat mu = arma_mu.row(i);
+      // arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);
-      arma::mat A(arma_A.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu,
-                  n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
-      arma::vec b(arma_b.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
+                  n_cols_mu + 1 + n_cols_mu + n_cols_mu);
+      arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec weights(n_cols_mu);
       
       A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = sigma;
-      
-      // target constraint
-      A.submat(n_cols_mu + 1, 0, n_cols_mu + 1, n_cols_mu - 1) = mu;
-      A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
-      b(n_cols_mu + 1) = target;
       
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
         n_size = j;
-        arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu + 1);
+        arma::uvec arma_ix(n_cols_mu + 2 * n_cols_mu + 1);
         arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the binary combination
-        for (int k = 0; k < 2 * n_cols_mu + 1; k++) {
+        for (int k = 0; k < 2 * n_cols_mu; k++) {
           
           if (n_size % 2 == 0) {
             arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
@@ -101,8 +95,7 @@ struct RollMinRisk : public Worker {
           
           // check if constraints are satisfied
           if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
-            (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps)) && 
-            (sum(mu * weights_subset) >= target)) {
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             n_solve += 1;
             
@@ -174,35 +167,30 @@ struct RollMaxReturn : public Worker {
       int n_size = 0;
       int n_solve = 0;
       int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
-      long double target = max(arma_mu.row(i));
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
-      arma::mat sigma = arma_sigma.slice(i);
-      arma::mat A(arma_A.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu,
-                  n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
-      arma::vec b(arma_b.begin(), n_cols_mu + 1 + 1 + n_cols_mu + n_cols_mu);
+      // arma::mat sigma = arma_sigma.slice(i);
+      arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
+                  n_cols_mu + 1 + n_cols_mu + n_cols_mu);
+      arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec weights(n_cols_mu);
       
-      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = sigma;
-      
-      // target constraint
-      A.submat(n_cols_mu + 1, 0, n_cols_mu + 1, n_cols_mu - 1) = mu;
-      A.submat(0, n_cols_mu + 1, n_cols_mu - 1, n_cols_mu + 1) = trans(mu);
-      b(n_cols_mu + 1) = target;
+      A.submat(0, 0, 0, n_cols_mu - 1) = mu;
+      A.submat(0, 0, n_cols_mu - 1, 0) = trans(mu);
       
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
         n_size = j;
-        arma::uvec arma_ix(n_cols_mu + 2 + 2 * n_cols_mu);
-        arma_ix.subvec(0, n_cols_mu + 1) = arma::linspace<arma::uvec>(1, n_cols_mu + 2, n_cols_mu + 2);
+        arma::uvec arma_ix(n_cols_mu + 2 * n_cols_mu + 1);
+        arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
           
           if (n_size % 2 == 0) {
-            arma_ix[n_cols_mu + 2 + k] = n_cols_mu + 2 + k;
+            arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
           }
           
           n_size /= 2;
@@ -233,7 +221,7 @@ struct RollMaxReturn : public Worker {
             n_solve += 1;
             
             // objective value
-            obj = as_scalar(trans_weights * sigma * weights_subset);
+            obj = as_scalar(-mu * weights_subset);
             
             if (obj <= obj_prev) {
               
@@ -312,8 +300,8 @@ struct RollMaxUtility : public Worker {
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec weights(n_cols_mu);
       
-      b.subvec(0, n_cols_mu - 1) = trans(mu);
       A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = gamma * sigma;
+      b.subvec(0, n_cols_mu - 1) = trans(mu);
       
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
