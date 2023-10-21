@@ -35,13 +35,13 @@ roi_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   
 }
 
-roi_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
+roi_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper = 1) {
   
   mu <- zoo::coredata(mu)
   
   n_cols_mu <- ncol(mu)
   
-  objective <- ROI::Q_objective(Q = gamma * sigma,
+  objective <- ROI::Q_objective(Q = lambda * sigma,
                                 L = -mu)
   constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_mu), rep(1, n_cols_mu), rep(1, n_cols_mu)),
                                    dir = c("==", ">=", "<="),

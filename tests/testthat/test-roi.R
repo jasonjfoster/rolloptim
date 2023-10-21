@@ -27,7 +27,7 @@ test_that("equivalent to ROI::ROI_solve", {
                  rollapplyr_port(roi_max_mean, mu = test_mu)[test_width:n_obs],
                  check.attributes = FALSE)
     
-    # rolling portfolio optimizations to maximize utility
+    # rolling optimizations to maximize utility
     expect_equal(roll_max_utility(test_mu, test_sigma),
                  rollapplyr_port(roi_max_utility, test_mu, test_sigma),
                  check.attributes = FALSE)

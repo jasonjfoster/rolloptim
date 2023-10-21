@@ -64,18 +64,18 @@ roll_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   ))
 }
 
-##' Rolling Portfolio Optimizations to Maximize Utility
+##' Rolling Optimizations to Maximize Utility
 ##'
-##' A function for computing rolling portfolio optimizations to maximize utility.
+##' A function for computing rolling optimizations to maximize utility.
 ##' 
-##' @param mu matrix. Rows are returns and columns are variables.
+##' @param mu matrix. Rows are means and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
-##' @param gamma numeric. Risk aversion parameter.
+##' @param lambda numeric. Risk aversion parameter.
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimizations to maximize utility.
+##' optimizations to maximize utility.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -86,16 +86,16 @@ roll_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
 ##' mu <- roll::roll_mean(x, 5)
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimizations to maximize utility
-##' roll_max_utility(mu, sigma, gamma = 1)
+##' # rolling optimizations to maximize utility
+##' roll_max_utility(mu, sigma, lambda = 1)
 ##' 
 ##' }
 ##' @export
-roll_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
+roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper = 1) {
   return(.Call(`_rollport_roll_max_utility`,
                mu,
                sigma,
-               as.numeric(gamma),
+               as.numeric(lambda),
                as.numeric(total),
                as.numeric(lower),
                as.numeric(upper)

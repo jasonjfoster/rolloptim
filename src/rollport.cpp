@@ -148,7 +148,7 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const double& total,
 
 // [[Rcpp::export(.roll_max_utility)]]
 NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sigma,
-                               const double& gamma, const double& total,
+                               const double& lambda, const double& total,
                                const double& lower, const double& upper) {
   
   int n_rows_mu = mu.nrow();
@@ -200,9 +200,9 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma_b.subvec(n_cols_mu + 1 + n_cols_mu,
                 n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
   
-  // compute rolling portfolio optimizations
+  // compute rolling optimizations
   rollport::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                            gamma, total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                            lambda, total, arma_lower, arma_upper, arma_ones, arma_diag,
                                             arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_utility);
   

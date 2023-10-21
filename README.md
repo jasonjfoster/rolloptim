@@ -5,7 +5,7 @@
 
 ## Overview
 
-`rollport` is a package that provides analytical computation of rolling portfolio optimization for time-series data.
+`rollport` is a package that provides analytical computation of rolling optimization for time-series data.
 
 ## Installation
 
@@ -30,16 +30,16 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 mu <- roll::roll_mean(x, 5)
 sigma <- roll::roll_cov(x, width = 5)
 ```
-Then, to compute rolling portfolio optimization, use the functions:
+Then, to compute rolling optimization, use the functions:
 
 ```r
-# rolling portfolio optimization to minimize risk
-roll_min_risk(mu, sigma)
+# rolling optimization to minimize variance
+roll_min_var(sigma)
 
-# rolling portfolio optimization to maximize return
-roll_max_return(mu, sigma)
+# rolling optimization to maximize mean
+roll_max_mean(mu)
 
-# rolling portfolio optimization to maximize utility
+# rolling optimization to maximize utility
 roll_max_utility(mu, sigma, gamma = 1)
 ```
 

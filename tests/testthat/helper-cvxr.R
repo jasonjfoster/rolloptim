@@ -34,7 +34,7 @@ cvxr_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   
 }
 
-cvxr_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper = 1) {
+cvxr_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper = 1) {
   
   mu <- zoo::coredata(mu)
   
@@ -42,7 +42,7 @@ cvxr_max_utility <- function(mu, sigma, gamma = 1, total = 1, lower = 0, upper =
   
   w <- CVXR::Variable(n_cols_mu)
   
-  objective <- CVXR::Minimize(0.5 * gamma * CVXR::quad_form(w, sigma) - mu %*% w)
+  objective <- CVXR::Minimize(0.5 * lambda * CVXR::quad_form(w, sigma) - mu %*% w)
   constraints <- list(sum(w) == total, w >= lower, w <= upper)
   
   problem <- CVXR::Problem(objective, constraints)

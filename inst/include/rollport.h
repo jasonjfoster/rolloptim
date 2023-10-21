@@ -247,14 +247,14 @@ struct RollMaxMean : public Worker {
   
 };
 
-// 'Worker' function for computing the rolling portfolio optimization
+// 'Worker' function for computing the rolling optimization
 struct RollMaxUtility : public Worker {
   
   const arma::mat arma_mu;      // source
   const arma::cube arma_sigma;
   const int n_rows_mu;
   const int n_cols_mu;
-  const double gamma;
+  const double lambda;
   const double total;
   const arma::vec arma_lower;
   const arma::vec arma_upper;
@@ -267,14 +267,14 @@ struct RollMaxUtility : public Worker {
   // initialize with source and destination
   RollMaxUtility(const arma::mat arma_mu, const arma::cube arma_sigma,
                  const int n_rows_mu, const int n_cols_mu,
-                 const double gamma, const double total,
+                 const double lambda, const double total,
                  const arma::vec arma_lower, const arma::vec arma_upper,
                  const arma::vec arma_ones, const arma::mat arma_diag,
                  const arma::mat arma_A, const arma::vec arma_b,
                  arma::mat& arma_weights)
     : arma_mu(arma_mu), arma_sigma(arma_sigma),
       n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
-      gamma(gamma), total(total),
+      lambda(lambda), total(total),
       arma_lower(arma_lower), arma_upper(arma_upper),
       arma_ones(arma_ones), arma_diag(arma_diag),
       arma_A(arma_A), arma_b(arma_b),
@@ -296,7 +296,7 @@ struct RollMaxUtility : public Worker {
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec weights(n_cols_mu);
       
-      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = gamma * sigma;
+      A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = lambda * sigma;
       b.subvec(0, n_cols_mu - 1) = trans(mu);
       
       // number of binary combinations
@@ -341,7 +341,7 @@ struct RollMaxUtility : public Worker {
             n_solve += 1;
             
             // objective value
-            obj = 0.5 * gamma * as_scalar(trans_weights * sigma * weights_subset) -
+            obj = 0.5 * lambda * as_scalar(trans_weights * sigma * weights_subset) -
               sum(mu * weights_subset);
             
             if (obj <= obj_prev) {

@@ -29,7 +29,7 @@ test_that("equivalent to CVXR::solve", {
                  rollapplyr_port(cvxr_max_mean, mu = test_mu),
                  check.attributes = FALSE)
     
-    # rolling portfolio optimizations to maximize utility
+    # rolling optimizations to maximize utility
     expect_equal(roll_max_utility(test_mu, test_sigma),
                  rollapplyr_port(cvxr_max_utility, mu = test_mu, sigma = test_sigma),
                  check.attributes = FALSE)
