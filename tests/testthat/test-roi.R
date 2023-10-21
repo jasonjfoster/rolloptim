@@ -17,19 +17,19 @@ test_that("equivalent to ROI::ROI_solve", {
     test_mu <- roll::roll_mean(test_ls[[a]], test_width)
     test_sigma <- roll::roll_cov(test_ls[[a]], width = test_width)
     
-    # rolling portfolio optimizations to minimize risk
-    expect_equal(roll_min_risk(test_mu, test_sigma),
-                 rollapplyr_port(roi_min_risk, test_mu, test_sigma),
+    # rolling optimizations to minimize variance
+    expect_equal(roll_min_var(test_sigma),
+                 rollapplyr_port(roi_min_var, sigma = test_sigma),
                  check.attributes = FALSE)
     
     # rolling portfolio optimizations to maximize return
     expect_equal(roll_max_return(test_mu, test_sigma)[test_width:n_obs],
-                 rollapplyr_port(roi_max_return, test_mu, test_sigma)[test_width:n_obs],
+                 rollapplyr_port(roi_max_return, mu = test_mu, sigma = test_sigma)[test_width:n_obs],
                  check.attributes = FALSE)
     
     # rolling portfolio optimizations to maximize utility
-    expect_equal(roll_max_utility(test_mu, test_sigma, test_gamma),
-                 rollapplyr_port(roi_max_utility, test_mu, test_sigma, test_gamma),
+    expect_equal(roll_max_utility(test_mu, test_sigma),
+                 rollapplyr_port(roi_max_utility, test_mu, test_sigma),
                  check.attributes = FALSE)
     
   }

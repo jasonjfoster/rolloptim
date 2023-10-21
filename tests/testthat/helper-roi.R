@@ -1,12 +1,10 @@
-roi_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
+roi_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
   
-  mu <- zoo::coredata(mu)
-  
-  n_cols_mu <- ncol(mu)
+  n_cols_sigma <- dim(sigma)[1]
   
   objective <- ROI::Q_objective(Q = 2 * sigma,
-                                L = rep(0, n_cols_mu))
-  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_mu), rep(1, n_cols_mu), rep(1, n_cols_mu)),
+                                L = rep(0, n_cols_sigma))
+  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_sigma), rep(1, n_cols_sigma), rep(1, n_cols_sigma)),
                                    dir = c("==", ">=", "<="),
                                    rhs = c(total, lower, upper))
   

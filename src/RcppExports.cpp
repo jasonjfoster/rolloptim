@@ -12,18 +12,17 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// roll_min_risk
-NumericMatrix roll_min_risk(const NumericMatrix& mu, const NumericVector& sigma, const double& total, const double& lower, const double& upper);
-RcppExport SEXP _rollport_roll_min_risk(SEXP muSEXP, SEXP sigmaSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+// roll_min_var
+NumericMatrix roll_min_var(const NumericVector& sigma, const double& total, const double& lower, const double& upper);
+RcppExport SEXP _rollport_roll_min_var(SEXP sigmaSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const NumericMatrix& >::type mu(muSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type sigma(sigmaSEXP);
     Rcpp::traits::input_parameter< const double& >::type total(totalSEXP);
     Rcpp::traits::input_parameter< const double& >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< const double& >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(roll_min_risk(mu, sigma, total, lower, upper));
+    rcpp_result_gen = Rcpp::wrap(roll_min_var(sigma, total, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }

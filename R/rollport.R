@@ -1,14 +1,13 @@
-##' Rolling Portfolio Optimizations to Minimize Risk
+##' Rolling Optimizations to Minimize Variance
 ##'
-##' A function for computing rolling portfolio optimizations to minimize risk.
+##' A function for computing rolling optimizations to minimize variance.
 ##' 
-##' @param mu matrix. Rows are returns and columns are variables.
 ##' @param sigma cube. Slices are covariance matrices.
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
 ##' @return An object of the same class and dimension as \code{mu} with the rolling
-##' portfolio optimizations to minimize risk.
+##' optimizations to minimize variance.
 ##' @examples
 ##' if (requireNamespace("roll", quietly = TRUE)) {
 ##' 
@@ -16,17 +15,15 @@
 ##' n_obs <- 15
 ##' x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 ##'
-##' mu <- roll::roll_mean(x, 5)
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimizations to minimize risk
-##' roll_min_risk(mu, sigma)
+##' # rolling portfolio optimizations to minimize variance
+##' roll_min_var(sigma)
 ##' 
 ##' }
 ##' @export
-roll_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
-  return(.Call(`_rollport_roll_min_risk`,
-               mu,
+roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
+  return(.Call(`_rollport_roll_min_var`,
                sigma,
                as.numeric(total),
                as.numeric(lower),

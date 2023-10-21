@@ -1,10 +1,8 @@
-cvxr_min_risk <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
+cvxr_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
   
-  mu <- zoo::coredata(mu)
+  n_cols_sigma <- dim(sigma)[1]
   
-  n_cols_mu <- ncol(mu)
-  
-  w <- CVXR::Variable(n_cols_mu)
+  w <- CVXR::Variable(n_cols_sigma)
   
   objective <- CVXR::Minimize(CVXR::quad_form(w, sigma))
   constraints <- list(sum(w) == total, w >= lower, w <= upper)
