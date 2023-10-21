@@ -128,11 +128,10 @@ struct RollMinVar : public Worker {
   
 };
 
-// 'Worker' function for computing the rolling portfolio optimization
-struct RollMaxReturn : public Worker {
+// 'Worker' function for computing the rolling optimization
+struct RollMaxMean : public Worker {
   
   const arma::mat arma_mu;      // source
-  const arma::cube arma_sigma;
   const int n_rows_mu;
   const int n_cols_mu;
   const double total;
@@ -145,18 +144,18 @@ struct RollMaxReturn : public Worker {
   arma::mat& arma_weights;      // destination (pass by reference)
   
   // initialize with source and destination
-  RollMaxReturn(const arma::mat arma_mu, const arma::cube arma_sigma,
-                const int n_rows_mu, const int n_cols_mu,
-                const double total, const arma::vec arma_lower,
-                const arma::vec arma_upper, const arma::vec arma_ones,
-                const arma::mat arma_diag, const arma::mat arma_A,
-                const arma::vec arma_b, arma::mat& arma_weights)
-    : arma_mu(arma_mu), arma_sigma(arma_sigma),
-      n_rows_mu(n_rows_mu), n_cols_mu(n_cols_mu),
-      total(total), arma_lower(arma_lower),
-      arma_upper(arma_upper), arma_ones(arma_ones),
-      arma_diag(arma_diag), arma_A(arma_A),
-      arma_b(arma_b), arma_weights(arma_weights) { }
+  RollMaxMean(const arma::mat arma_mu, const int n_rows_mu,
+              const int n_cols_mu, const double total,
+              const arma::vec arma_lower, const arma::vec arma_upper,
+              const arma::vec arma_ones, const arma::mat arma_diag,
+              const arma::mat arma_A, const arma::vec arma_b,
+              arma::mat& arma_weights)
+    : arma_mu(arma_mu), n_rows_mu(n_rows_mu),
+      n_cols_mu(n_cols_mu), total(total),
+      arma_lower(arma_lower), arma_upper(arma_upper),
+      arma_ones(arma_ones), arma_diag(arma_diag),
+      arma_A(arma_A), arma_b(arma_b),
+      arma_weights(arma_weights) { }
   
   // function call operator that iterates by slice
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
@@ -168,7 +167,6 @@ struct RollMaxReturn : public Worker {
       long double obj = arma::datum::inf;
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
-      // arma::mat sigma = arma_sigma.slice(i);
       arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
                   n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);

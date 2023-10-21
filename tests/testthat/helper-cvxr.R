@@ -15,7 +15,7 @@ cvxr_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
   
 }
 
-cvxr_max_return <- function(mu, sigma, total = 1, lower = 0, upper = 1) {
+cvxr_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   
   mu <- zoo::coredata(mu)
   

@@ -5,8 +5,8 @@
     .Call(`_rollport_roll_min_var`, sigma, total, lower, upper)
 }
 
-.roll_max_return <- function(mu, sigma, total, lower, upper) {
-    .Call(`_rollport_roll_max_return`, mu, sigma, total, lower, upper)
+.roll_max_mean <- function(mu, total, lower, upper) {
+    .Call(`_rollport_roll_max_mean`, mu, total, lower, upper)
 }
 
 .roll_max_utility <- function(mu, sigma, gamma, total, lower, upper) {

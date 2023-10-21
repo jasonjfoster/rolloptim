@@ -2,7 +2,7 @@
 % Please edit documentation in R/rollport.R
 \name{roll_min_var}
 \alias{roll_min_var}
-\title{Rolling Portfolio Optimizations to Minimize Variance}
+\title{Rolling Optimizations to Minimize Variance}
 \usage{
 roll_min_var(sigma, total = 1, lower = 0, upper = 1)
 }
@@ -17,10 +17,10 @@ roll_min_var(sigma, total = 1, lower = 0, upper = 1)
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-portfolio optimizations to minimize variance.
+optimizations to minimize variance.
 }
 \description{
-A function for computing rolling portfolio optimizations to minimize variance.
+A function for computing rolling optimizations to minimize variance.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

@@ -22,9 +22,9 @@ test_that("equivalent to ROI::ROI_solve", {
                  rollapplyr_port(roi_min_var, sigma = test_sigma),
                  check.attributes = FALSE)
     
-    # rolling portfolio optimizations to maximize return
-    expect_equal(roll_max_return(test_mu, test_sigma)[test_width:n_obs],
-                 rollapplyr_port(roi_max_return, mu = test_mu, sigma = test_sigma)[test_width:n_obs],
+    # rolling optimizations to maximize mean
+    expect_equal(roll_max_mean(test_mu)[test_width:n_obs],
+                 rollapplyr_port(roi_max_mean, mu = test_mu)[test_width:n_obs],
                  check.attributes = FALSE)
     
     # rolling portfolio optimizations to maximize utility
