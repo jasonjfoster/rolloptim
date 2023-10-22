@@ -5,7 +5,7 @@
 
 ## Overview
 
-`rollport` is a package that provides analytical computation of rolling optimization for time-series data.
+`rolloptim` is a package that provides analytical computation of rolling optimization for time-series data.
 
 ## Installation
 
