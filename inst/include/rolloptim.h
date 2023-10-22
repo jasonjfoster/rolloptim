@@ -1,5 +1,5 @@
-#ifndef ROLLPORT_H
-#define ROLLPORT_H
+#ifndef ROLLOPTIM_H
+#define ROLLOPTIM_H
 
 #define ARMA_WARN_LEVEL 0
 
@@ -8,7 +8,7 @@
 using namespace Rcpp;
 using namespace RcppParallel;
 
-namespace rollport {
+namespace rolloptim {
 
 // 'Worker' function for computing the rolling optimization
 struct RollMinVar : public Worker {

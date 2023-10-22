@@ -1,4 +1,4 @@
-#include "rollport.h"
+#include "rolloptim.h"
 
 void check_rows(const int& n_rows_mu, const int& n_slices_sigma) {
   
@@ -70,9 +70,9 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const double& total,
                 n_cols_sigma + 1 + n_cols_sigma + n_cols_sigma - 1) = arma_upper;
   
   // compute rolling optimizations
-  rollport::RollMinVar roll_min_var(arma_sigma, n_rows_sigma, n_cols_sigma,
-                                    total, arma_lower, arma_upper, arma_ones, arma_diag,
-                                    arma_A, arma_b, arma_weights);
+  rolloptim::RollMinVar roll_min_var(arma_sigma, n_rows_sigma, n_cols_sigma,
+                                     total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                     arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_sigma, roll_min_var);
   
   NumericMatrix result(wrap(arma_weights));
@@ -127,9 +127,9 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const double& total,
                 n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
   
   // compute rolling optimizations
-  rollport::RollMaxMean roll_max_mean(arma_mu, n_rows_mu, n_cols_mu,
-                                      total, arma_lower, arma_upper, arma_ones, arma_diag,
-                                      arma_A, arma_b, arma_weights);
+  rolloptim::RollMaxMean roll_max_mean(arma_mu, n_rows_mu, n_cols_mu,
+                                       total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                       arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_mean);
   
   NumericMatrix result(wrap(arma_weights));
@@ -201,9 +201,9 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
                 n_cols_mu + 1 + n_cols_mu + n_cols_mu - 1) = arma_upper;
   
   // compute rolling optimizations
-  rollport::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
-                                            lambda, total, arma_lower, arma_upper, arma_ones, arma_diag,
-                                            arma_A, arma_b, arma_weights);
+  rolloptim::RollMaxUtility roll_max_utility(arma_mu, arma_sigma, n_rows_mu, n_cols_mu,
+                                             lambda, total, arma_lower, arma_upper, arma_ones, arma_diag,
+                                             arma_A, arma_b, arma_weights);
   parallelFor(0, n_rows_mu, roll_max_utility);
   
   NumericMatrix result(wrap(arma_weights));

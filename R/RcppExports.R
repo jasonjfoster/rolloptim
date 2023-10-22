@@ -2,14 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .roll_min_var <- function(sigma, total, lower, upper) {
-    .Call(`_rollport_roll_min_var`, sigma, total, lower, upper)
+    .Call(`_rolloptim_roll_min_var`, sigma, total, lower, upper)
 }
 
 .roll_max_mean <- function(mu, total, lower, upper) {
-    .Call(`_rollport_roll_max_mean`, mu, total, lower, upper)
+    .Call(`_rolloptim_roll_max_mean`, mu, total, lower, upper)
 }
 
 .roll_max_utility <- function(mu, sigma, lambda, total, lower, upper) {
-    .Call(`_rollport_roll_max_utility`, mu, sigma, lambda, total, lower, upper)
+    .Call(`_rolloptim_roll_max_utility`, mu, sigma, lambda, total, lower, upper)
 }
 

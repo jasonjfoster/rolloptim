@@ -1,4 +1,4 @@
 library(testthat)
-library(rollport)
+library(rolloptim)
 
-test_check("rollport")
+test_check("rolloptim")

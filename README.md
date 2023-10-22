@@ -1,4 +1,4 @@
-# rollport
+# rolloptim
 
 [![](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml)
 [![](https://codecov.io/gh/jjf234/rollport/graph/badge.svg)](https://app.codecov.io/github/jjf234/rollport)
@@ -21,7 +21,7 @@ devtools::install_github("jjf234/rollport")
 Load the package and supply a dataset:
 
 ``` r
-library(rollport)
+library(rolloptim)
 
 n_vars <- 3
 n_obs <- 15
@@ -40,7 +40,7 @@ roll_min_var(sigma)
 roll_max_mean(mu)
 
 # rolling optimization to maximize utility
-roll_max_utility(mu, sigma, gamma = 1)
+roll_max_utility(mu, sigma, lambda = 1)
 ```
 
 Note that handling of constraints is implemented by default (see the `total`, `lower`, and `upper` arguments).

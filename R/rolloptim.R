@@ -17,13 +17,13 @@
 ##'
 ##' sigma <- roll::roll_cov(x, width = 5)
 ##' 
-##' # rolling portfolio optimizations to minimize variance
+##' # rolling optimizations to minimize variance
 ##' roll_min_var(sigma)
 ##' 
 ##' }
 ##' @export
 roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
-  return(.Call(`_rollport_roll_min_var`,
+  return(.Call(`_rolloptim_roll_min_var`,
                sigma,
                as.numeric(total),
                as.numeric(lower),
@@ -56,7 +56,7 @@ roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
 ##' }
 ##' @export
 roll_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
-  return(.Call(`_rollport_roll_max_mean`,
+  return(.Call(`_rolloptim_roll_max_mean`,
                mu,
                as.numeric(total),
                as.numeric(lower),
@@ -92,7 +92,7 @@ roll_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
 ##' }
 ##' @export
 roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper = 1) {
-  return(.Call(`_rollport_roll_max_utility`,
+  return(.Call(`_rolloptim_roll_max_utility`,
                mu,
                sigma,
                as.numeric(lambda),

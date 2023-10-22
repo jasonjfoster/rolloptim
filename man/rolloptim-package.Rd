@@ -1,18 +1,18 @@
-\name{rollport-package}
-\alias{rollport-package}
-\alias{rollport}
+\name{rolloptim-package}
+\alias{rolloptim-package}
+\alias{rolloptim}
 \docType{package}
 \title{
-  \packageTitle{rollport}
+  \packageTitle{rolloptim}
 }
 \description{
-  \packageDescription{rollport}
+  \packageDescription{rolloptim}
 }
 \details{
-  \code{rollport} is a package that provides analytical computation of rolling portfolio optimization for time-series data.
+  \code{rolloptim} is a package that provides analytical computation of rolling optimization for time-series data.
 }
 \author{
-  \packageAuthor{rollport}
+  \packageAuthor{rolloptim}
 }
 \references{
   Markowitz, H.M. (1952). "Portfolio Selection." \emph{The Journal of Finance}, 7(1), 77–91.
