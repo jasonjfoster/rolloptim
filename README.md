@@ -1,8 +1,5 @@
 # rolloptim
 
-[![](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jjf234/rollport/actions/workflows/check-standard.yaml)
-[![](https://codecov.io/gh/jjf234/rollport/graph/badge.svg)](https://app.codecov.io/github/jjf234/rollport)
-
 ## Overview
 
 `rolloptim` is a package that provides analytical computation of rolling optimization for time-series data.
@@ -13,8 +10,8 @@ Install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jjf234/rollport")
-```
+devtools::install_github("jjf234/rolloptim") # roll (>= 1.1.7)
+``` 
 
 ## Usage
 
@@ -26,9 +23,12 @@ library(rolloptim)
 n_vars <- 3
 n_obs <- 15
 x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
+y <- rnorm(n_obs)
 
 mu <- roll::roll_mean(x, 5)
 sigma <- roll::roll_cov(x, width = 5)
+xx <- roll::roll_crossprod(x, x, 5)
+xy <- roll::roll_crossprod(x, y, 5)
 ```
 Then, to compute rolling optimization, use the functions:
 
@@ -38,6 +38,9 @@ roll_min_var(sigma)
 
 # rolling optimization to maximize mean
 roll_max_mean(mu)
+
+# rolling optimization to minimize residual sum of squares
+roll_min_rss(xx, xy)
 
 # rolling optimization to maximize utility
 roll_max_utility(mu, sigma, lambda = 1)
