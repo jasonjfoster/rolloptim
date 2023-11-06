@@ -101,3 +101,41 @@ roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper 
                as.numeric(upper)
   ))
 }
+
+##' Rolling Optimizations to Minimize Residual Sum of Squares
+##'
+##' A function for computing rolling optimizations to minimize residual sum of squares.
+##' 
+##' @param xx cube. Slices are crossproducts of \code{x} and \code{x}.
+##' @param xy cube. Slices are crossproducts of \code{x} and \code{y}.
+##' @param total numeric. Sum of the weights.
+##' @param lower numeric. Lower bound of the weights.
+##' @param upper numeric. Upper bound of the weights.
+##' @return An object of the same class and dimension as \code{x} with the rolling
+##' optimizations to minimize residual sum of squares.
+##' @examples
+##' if (requireNamespace("roll", quietly = TRUE)) {
+##' 
+##' n_vars <- 3
+##' n_obs <- 15
+##' x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
+##' y <- rnorm(n_obs)
+##' 
+##' xx <- roll::roll_crossprod(x, x, 5)
+##' xy <- roll::roll_crossprod(x, y, 5)
+##' 
+##' # rolling optimizations to minimize residual sum of squares
+##' roll_min_rss(xx, xy)
+##' 
+##' }
+##' @export
+roll_min_rss <- function(xx, xy, total = 1, lower = 0, upper = 1) {
+  return(.Call(`_rolloptim_roll_min_rss`,
+               xx,
+               xy,
+               as.numeric(1),
+               as.numeric(total),
+               as.numeric(lower),
+               as.numeric(upper)
+  ))
+}

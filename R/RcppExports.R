@@ -13,3 +13,7 @@
     .Call(`_rolloptim_roll_max_utility`, mu, sigma, lambda, total, lower, upper)
 }
 
+.roll_min_rss <- function(xx, xy, lambda, total, lower, upper) {
+    .Call(`_rolloptim_roll_min_rss`, xx, xy, lambda, total, lower, upper)
+}
+

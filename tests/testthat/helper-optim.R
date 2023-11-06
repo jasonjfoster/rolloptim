@@ -1,4 +1,4 @@
-rollapplyr_port <- function(f, mu = NULL, sigma = NULL) {
+rollapplyr_optim <- function(f, mu = NULL, sigma = NULL) {
   
   if (!is.null(mu) && !is.null(sigma)) {
 
@@ -68,6 +68,25 @@ rollapplyr_port <- function(f, mu = NULL, sigma = NULL) {
     if (length(sigma_dimnames) > 1) {
       attr(result, "dimnames") <- list(NULL, sigma_dimnames[[1]])
     } 
+    
+  }
+  
+  return(result)
+  
+}
+
+rollapplyr_xy <- function(f, x, y, width) {
+  
+  n_rows_xy <- nrow(x)
+  n_cols_x <- ncol(x)
+  result <- matrix(as.numeric(NA), n_rows_xy, n_cols_x)
+  
+  for (i in 1:n_rows_xy) {
+    
+    x_subset <- x[max(1, i - width + 1):i, , drop = FALSE]
+    y_subset <- y[max(1, i - width + 1):i, , drop = FALSE]
+    
+    result[i, ] <- f(x_subset, y_subset)
     
   }
   

@@ -54,3 +54,24 @@ roi_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper =
   return(ROI::solution(result))
   
 }
+
+roi_min_rss <- function(x, y, total = 1, lower = 0, upper = 1) {
+  
+  x <- zoo::coredata(x)
+  y <- zoo::coredata(y)
+  
+  n_cols_x <- ncol(x)
+  
+  objective <- ROI::Q_objective(Q = 2 * t(x) %*% x,
+                                L = -2 * t(y) %*% x)
+  constraints <- ROI::L_constraint(L = rbind(rep(1, n_cols_x), rep(1, n_cols_x), rep(1, n_cols_x)),
+                                   dir = c("==", ">=", "<="),
+                                   rhs = c(total, lower, upper))
+  
+  problem <- ROI::OP(objective, constraints)
+  
+  result <- ROI::ROI_solve(problem, solver = "qpoases")
+  
+  return(ROI::solution(result))
+  
+}

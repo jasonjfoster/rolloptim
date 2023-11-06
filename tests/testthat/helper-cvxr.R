@@ -52,3 +52,23 @@ cvxr_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper 
   return(result)
   
 }
+
+cvxr_min_rss <- function(x, y, total = 1, lower = 0, upper = 1) {
+  
+  x <- zoo::coredata(x)
+  y <- zoo::coredata(y)
+  
+  n_cols_x <- ncol(x)
+  
+  w <- CVXR::Variable(n_cols_x)
+  
+  objective <- CVXR::Minimize(CVXR::sum_squares(y - x %*% w))
+  constraints <- list(sum(w) == total, w >= lower, w <= upper)
+  
+  problem <- CVXR::Problem(objective, constraints)
+  
+  result <- CVXR::solve(problem)$getValue(w)
+  
+  return(result)
+  
+}
