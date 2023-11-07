@@ -33,7 +33,8 @@ test_that("equivalent to ROI::ROI_solve", {
     
     # rolling optimizations to maximize utility
     expect_equal(roll_max_utility(test_mu, test_sigma),
-                 rollapplyr_optim(roi_max_utility, test_mu, test_sigma),
+                 rollapplyr_optim(roi_max_utility, test_mu,
+                                  test_sigma),
                  check.attributes = FALSE)
     
   }
@@ -49,8 +50,8 @@ test_that("equivalent to ROI::ROI_solve", {
       
       # rolling optimizations to minimize residual sum of squares
       expect_equal(roll_min_rss(test_xx, test_xy),
-                   rollapplyr_xy(roi_min_rss, x = test_zoo_x[[ax]],
-                                 y = test_zoo_y[[ay]], width = test_width),
+                   rollapplyr_xy(roi_min_rss, test_zoo_x[[ax]],
+                                 test_zoo_y[[ay]], test_width),
                    check.attributes = FALSE)
       
     }
