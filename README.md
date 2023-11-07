@@ -26,9 +26,9 @@ x <- matrix(rnorm(n_obs * n_vars), nrow = n_obs, ncol = n_vars)
 y <- rnorm(n_obs)
 
 mu <- roll::roll_mean(x, 5)
-sigma <- roll::roll_cov(x, width = 5)
 xx <- roll::roll_crossprod(x, x, 5)
 xy <- roll::roll_crossprod(x, y, 5)
+sigma <- roll::roll_cov(x, width = 5)
 ```
 Then, to compute rolling optimization, use the functions:
 
