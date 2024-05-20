@@ -1,5 +1,7 @@
 # rolloptim
 
+[![](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml)
+
 ## Overview
 
 `rolloptim` is a package that provides analytical computation of rolling optimization for time-series data.
