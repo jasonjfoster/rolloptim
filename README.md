@@ -1,6 +1,7 @@
 # rolloptim
 
 [![](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml)
+[![](https://codecov.io/gh/jasonjfoster/rolloptim/graph/badge.svg)](https://app.codecov.io/github/jasonjfoster/rolloptim)
 
 ## Overview
 
