@@ -13,7 +13,7 @@ Install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("jasonjfoster/rolloptim") # roll (>= 1.1.7)
+devtools::install_github("jasonjfoster/rolloptim")
 ``` 
 
 ## Usage
@@ -21,7 +21,7 @@ devtools::install_github("jasonjfoster/rolloptim") # roll (>= 1.1.7)
 Load the package and supply a dataset:
 
 ``` r
-library(rolloptim)
+library(rolloptim) # roll (>= 1.1.7)
 
 n_vars <- 3
 n_obs <- 15
