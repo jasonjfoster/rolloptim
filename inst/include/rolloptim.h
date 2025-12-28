@@ -43,68 +43,58 @@ struct RollMinVar : public Worker {
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
-      int n_size = 0;
       int n_solve = 0;
-      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_sigma);
-      long double obj = arma::datum::inf;
+      int n_combn = 1 << (2 * n_cols_sigma); // 2 ^ (2 * n_cols_sigma)
       long double obj_prev = arma::datum::inf;
       arma::mat sigma = arma_sigma.slice(i);
       arma::mat A(arma_A.begin(), n_cols_sigma + 1 + n_cols_sigma + n_cols_sigma,
                   n_cols_sigma + 1 + n_cols_sigma + n_cols_sigma);
       arma::vec b(arma_b.begin(), n_cols_sigma + 1 + n_cols_sigma + n_cols_sigma);
-      arma::vec weights(n_cols_sigma);
       
       A.submat(0, 0, n_cols_sigma - 1, n_cols_sigma - 1) = sigma;
       
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
-        n_size = j;
         arma::uvec arma_ix(n_cols_sigma + 2 * n_cols_sigma + 1);
         arma_ix.subvec(0, n_cols_sigma) = arma::linspace<arma::uvec>(1, n_cols_sigma + 1, n_cols_sigma + 1);
         
         // find the binary combination
         for (int k = 0; k < 2 * n_cols_sigma; k++) {
-          
-          if (n_size % 2 == 0) {
+          if ((j & (1 << k)) == 0) { 
             arma_ix[n_cols_sigma + 1 + k] = n_cols_sigma + 1 + k;
-          }
-          
-          n_size /= 2;
-          
+          }          
         }
         
         arma::uvec arma_ix_subset = find(arma_ix);
         arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
         arma::vec b_subset = b(arma_ix_subset);
-        
+        arma::vec weights(n_cols_sigma);
+
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
                                         arma::solve_opts::no_approx);
         
         // don't find approximate solution for rank deficient system
         if (status_solve) {
-          
-          arma_ix = arma::linspace<arma::uvec>(0, n_cols_sigma - 1, n_cols_sigma);
-          
+                    
           // weights
-          arma::vec weights_subset = weights(arma_ix);
-          arma::mat trans_weights = trans(weights_subset);
+          arma::vec weights_subset = weights.subvec(0, n_cols_sigma - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
-              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
+          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
+              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
             
             n_solve += 1;
             
             // objective value
-            obj = as_scalar(trans_weights * sigma * weights_subset);
+            long double obj = arma::as_scalar(trans(weights_subset) * sigma * weights_subset);
             
             if (obj <= obj_prev) {
               
               obj_prev = obj;
               
-              arma_weights.row(i) = trans_weights;
+              arma_weights.row(i) = trans(weights_subset);
               
             }
             
@@ -115,12 +105,7 @@ struct RollMinVar : public Worker {
       }
       
       if (n_solve == 0) {
-        
-        arma::rowvec no_solution(n_cols_sigma);
-        no_solution.fill(NA_REAL);
-        
-        arma_weights.row(i) = no_solution;
-        
+        arma_weights.row(i).fill(NA_REAL);
       }
       
     }
@@ -161,16 +146,13 @@ struct RollMaxMean : public Worker {
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
-      int n_size = 0;
       int n_solve = 0;
-      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
-      long double obj = arma::datum::inf;
+      int n_combn = 1 << (2 * n_cols_mu); // 2 ^ (2 * n_cols_mu)
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
                   n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
-      arma::vec weights(n_cols_mu);
       
       A.submat(0, 0, 0, n_cols_mu - 1) = mu;
       A.submat(0, 0, n_cols_mu - 1, 0) = trans(mu);
@@ -178,52 +160,45 @@ struct RollMaxMean : public Worker {
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
-        n_size = j;
         arma::uvec arma_ix(n_cols_mu + 2 * n_cols_mu + 1);
         arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
-          
-          if (n_size % 2 == 0) {
+          if ((j & (1 << k)) == 0) {
             arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
-          }
-          
-          n_size /= 2;
-          
+          }          
         }
         
         arma::uvec arma_ix_subset = find(arma_ix);
         arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
         arma::vec b_subset = b(arma_ix_subset);
-        
+        arma::vec weights(n_cols_mu);
+
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
                                         arma::solve_opts::no_approx);
         
         // don't find approximate solution for rank deficient system
         if (status_solve) {
-          
-          arma_ix = arma::linspace<arma::uvec>(0, n_cols_mu - 1, n_cols_mu);
-          
+                    
           // weights
-          arma::vec weights_subset = weights(arma_ix);
-          arma::mat trans_weights = trans(weights_subset);
+          arma::vec weights_subset = weights.subvec(0, n_cols_mu - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
-              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
+          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
+              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
             
             n_solve += 1;
             
             // objective value
-            obj = as_scalar(-mu * weights_subset);
+            long double obj = as_scalar(-mu * weights_subset);
             
             if (obj <= obj_prev) {
               
               obj_prev = obj;
               
-              arma_weights.row(i) = trans_weights;
+              arma_weights.row(i) = trans(weights_subset);
               
             }
             
@@ -234,12 +209,7 @@ struct RollMaxMean : public Worker {
       }
       
       if (n_solve == 0) {
-        
-        arma::rowvec no_solution(n_cols_mu);
-        no_solution.fill(NA_REAL);
-        
-        arma_weights.row(i) = no_solution;
-        
+        arma_weights.row(i).fill(NA_REAL);
       }
       
     }
@@ -284,17 +254,14 @@ struct RollMaxUtility : public Worker {
   void operator()(std::size_t begin_slice, std::size_t end_slice) {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
-      int n_size = 0;
       int n_solve = 0;
-      int n_combn = pow((long double)2.0, (long double)2.0 * n_cols_mu);
-      long double obj = arma::datum::inf;
+      int n_combn = 1 << (2 * n_cols_mu); // 2 ^ (2 * n_cols_mu)
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);
       arma::mat A(arma_A.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu,
                   n_cols_mu + 1 + n_cols_mu + n_cols_mu);
       arma::vec b(arma_b.begin(), n_cols_mu + 1 + n_cols_mu + n_cols_mu);
-      arma::vec weights(n_cols_mu);
       
       A.submat(0, 0, n_cols_mu - 1, n_cols_mu - 1) = lambda * sigma;
       b.subvec(0, n_cols_mu - 1) = trans(mu);
@@ -302,53 +269,46 @@ struct RollMaxUtility : public Worker {
       // number of binary combinations
       for (int j = 0; j < n_combn; j++) {
         
-        n_size = j;
         arma::uvec arma_ix(n_cols_mu + 1 + 2 * n_cols_mu);
         arma_ix.subvec(0, n_cols_mu) = arma::linspace<arma::uvec>(1, n_cols_mu + 1, n_cols_mu + 1);
         
         // find the binary combination
         for (int k = 0; k < 2 * n_cols_mu; k++) {
-          
-          if (n_size % 2 == 0) {
+          if ((j & (1 << k)) == 0) { 
             arma_ix[n_cols_mu + 1 + k] = n_cols_mu + 1 + k;
-          }
-          
-          n_size /= 2;
-          
+          }          
         }
         
         arma::uvec arma_ix_subset = find(arma_ix);
         arma::mat A_subset = A(arma_ix_subset, arma_ix_subset);
         arma::vec b_subset = b(arma_ix_subset);
-        
+        arma::vec weights(n_cols_mu);
+
         // check if solution is found 
         bool status_solve = arma::solve(weights, A_subset, b_subset,
                                         arma::solve_opts::no_approx);
         
         // don't find approximate solution for rank deficient system
         if (status_solve) {
-          
-          arma_ix = arma::linspace<arma::uvec>(0, n_cols_mu - 1, n_cols_mu);
-          
+                    
           // weights
-          arma::vec weights_subset = weights(arma_ix);
-          arma::mat trans_weights = trans(weights_subset);
+          arma::vec weights_subset = weights.subvec(0, n_cols_mu - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
-              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
+          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
+              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
             
             n_solve += 1;
             
             // objective value
-            obj = 0.5 * lambda * as_scalar(trans_weights * sigma * weights_subset) -
-              sum(mu * weights_subset);
+            long double obj = 0.5 * lambda * as_scalar(trans(weights_subset) * sigma * weights_subset) -
+              arma::dot(mu, weights_subset);
             
             if (obj <= obj_prev) {
               
               obj_prev = obj;
               
-              arma_weights.row(i) = trans_weights;
+              arma_weights.row(i) = trans(weights_subset);
               
             }
             
@@ -358,13 +318,8 @@ struct RollMaxUtility : public Worker {
         
       }
       
-      if (n_solve == 0) {
-        
-        arma::rowvec no_solution(n_cols_mu);
-        no_solution.fill(NA_REAL);
-        
-        arma_weights.row(i) = no_solution;
-        
+      if (n_solve == 0) {        
+        arma_weights.row(i).fill(NA_REAL);
       }
       
     }
