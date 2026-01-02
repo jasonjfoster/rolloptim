@@ -3,6 +3,8 @@
 ##' A function for computing rolling optimizations to minimize variance.
 ##' 
 ##' @param sigma cube. Slices are covariance matrices.
+##' @param mu matrix. Rows are means and columns are variables.
+##' @param target vector. Rows are target means.
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
@@ -22,9 +24,12 @@
 ##' 
 ##' }
 ##' @export
-roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
+roll_min_var <- function(sigma, mu = NULL, target = NULL,
+                         total = 1, lower = 0, upper = 1) {
   return(.Call(`_rolloptim_roll_min_var`,
                sigma,
+               mu,
+               target,
                as.numeric(total),
                as.numeric(lower),
                as.numeric(upper)
@@ -36,6 +41,8 @@ roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
 ##' A function for computing rolling optimizations to maximize mean.
 ##' 
 ##' @param mu matrix. Rows are means and columns are variables.
+##' @param sigma cube. Slices are covariance matrices.
+##' @param target vector. Rows are target variances.
 ##' @param total numeric. Sum of the weights.
 ##' @param lower numeric. Lower bound of the weights.
 ##' @param upper numeric. Upper bound of the weights.
@@ -55,9 +62,12 @@ roll_min_var <- function(sigma, total = 1, lower = 0, upper = 1) {
 ##' 
 ##' }
 ##' @export
-roll_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
+roll_max_mean <- function(mu, sigma = NULL, target = NULL,
+                          total = 1, lower = 0, upper = 1) {
   return(.Call(`_rolloptim_roll_max_mean`,
                mu,
+               sigma,
+               target,
                as.numeric(total),
                as.numeric(lower),
                as.numeric(upper)
@@ -133,7 +143,6 @@ roll_min_rss <- function(xx, xy, total = 1, lower = 0, upper = 1) {
   return(.Call(`_rolloptim_roll_min_rss`,
                xx,
                xy,
-               as.numeric(1),
                as.numeric(total),
                as.numeric(lower),
                as.numeric(upper)

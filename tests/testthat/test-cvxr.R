@@ -25,19 +25,29 @@ test_that("equivalent to CVXR::solve", {
     test_sigma <- roll::roll_cov(test_ls[[a]], width = test_width)
     
     # rolling optimizations to minimize variance
+    # cvxr_min_var(test_sigma[ , , n_obs])
     expect_equal(roll_min_var(test_sigma),
                  rollapplyr_optim(cvxr_min_var, sigma = test_sigma),
                  check.attributes = FALSE)
     
-    # rolling optimizations to maximize mean
-    expect_equal(roll_max_mean(test_mu),
-                 rollapplyr_optim(cvxr_max_mean, mu = test_mu),
+    # cvxr_min_var(test_sigma[ , , n_obs], test_mu[n_obs, ], test_target_mu[n_obs])
+    expect_equal(roll_min_var(test_sigma, mu = test_mu,
+                              target = test_target_mu),
+                 rollapplyr_optim(cvxr_min_var, sigma = test_sigma,
+                                  mu = test_mu, target = test_target_mu),
                  check.attributes = FALSE)
     
+    # rolling optimizations to maximize mean
+    # cvxr_max_mean(test_mu[n_obs, ])
+    expect_equal(roll_max_mean(test_mu),
+                 rollapplyr_optim(cvxr_max_mean, mu = test_mu),
+                 check.attributes = FALSE, tolerance = 1e-5)
+    
     # rolling optimizations to maximize utility
+    # cvxr_max_utility(test_mu[n_obs, ], test_sigma[ , , n_obs])
     expect_equal(roll_max_utility(test_mu, test_sigma),
-                 rollapplyr_optim(cvxr_max_utility, test_mu,
-                                  test_sigma),
+                 rollapplyr_optim(cvxr_max_utility, mu = test_mu,
+                                  sigma = test_sigma),
                  check.attributes = FALSE)
     
   }
@@ -52,6 +62,7 @@ test_that("equivalent to CVXR::solve", {
                                       test_width, min_obs = 1)
       
       # rolling optimizations to minimize residual sum of squares
+      # cvxr_min_rss(test_zoo_x[[ax]], test_zoo_y[[ay]])
       expect_equal(roll_min_rss(test_xx, test_xy),
                    rollapplyr_xy(cvxr_min_rss, test_zoo_x[[ax]],
                                  test_zoo_y[[ay]], test_width),

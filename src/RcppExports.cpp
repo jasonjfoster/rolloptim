@@ -13,30 +13,34 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // roll_min_var
-NumericMatrix roll_min_var(const NumericVector& sigma, const double& total, const double& lower, const double& upper);
-RcppExport SEXP _rolloptim_roll_min_var(SEXP sigmaSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu, const SEXP& target, const double& total, const double& lower, const double& upper);
+RcppExport SEXP _rolloptim_roll_min_var(SEXP sigmaSEXP, SEXP muSEXP, SEXP targetSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const double& >::type total(totalSEXP);
     Rcpp::traits::input_parameter< const double& >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< const double& >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(roll_min_var(sigma, total, lower, upper));
+    rcpp_result_gen = Rcpp::wrap(roll_min_var(sigma, mu, target, total, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }
 // roll_max_mean
-NumericMatrix roll_max_mean(const NumericMatrix& mu, const double& total, const double& lower, const double& upper);
-RcppExport SEXP _rolloptim_roll_max_mean(SEXP muSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma, const SEXP& target, const double& total, const double& lower, const double& upper);
+RcppExport SEXP _rolloptim_roll_max_mean(SEXP muSEXP, SEXP sigmaSEXP, SEXP targetSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericMatrix& >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type sigma(sigmaSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< const double& >::type total(totalSEXP);
     Rcpp::traits::input_parameter< const double& >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< const double& >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(roll_max_mean(mu, total, lower, upper));
+    rcpp_result_gen = Rcpp::wrap(roll_max_mean(mu, sigma, target, total, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -57,18 +61,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // roll_min_rss
-NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy, const double& lambda, const double& total, const double& lower, const double& upper);
-RcppExport SEXP _rolloptim_roll_min_rss(SEXP xxSEXP, SEXP xySEXP, SEXP lambdaSEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
+NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy, const double& total, const double& lower, const double& upper);
+RcppExport SEXP _rolloptim_roll_min_rss(SEXP xxSEXP, SEXP xySEXP, SEXP totalSEXP, SEXP lowerSEXP, SEXP upperSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const NumericVector& >::type xx(xxSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< const double& >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< const double& >::type total(totalSEXP);
     Rcpp::traits::input_parameter< const double& >::type lower(lowerSEXP);
     Rcpp::traits::input_parameter< const double& >::type upper(upperSEXP);
-    rcpp_result_gen = Rcpp::wrap(roll_min_rss(xx, xy, lambda, total, lower, upper));
+    rcpp_result_gen = Rcpp::wrap(roll_min_rss(xx, xy, total, lower, upper));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -4,10 +4,15 @@
 \alias{roll_max_mean}
 \title{Rolling Optimizations to Maximize Mean}
 \usage{
-roll_max_mean(mu, total = 1, lower = 0, upper = 1)
+roll_max_mean(mu, sigma = NULL, target = NULL, total = 1, lower = 0,
+  upper = 1)
 }
 \arguments{
 \item{mu}{matrix. Rows are means and columns are variables.}
+
+\item{sigma}{cube. Slices are covariance matrices.}
+
+\item{target}{vector. Rows are target variances.}
 
 \item{total}{numeric. Sum of the weights.}
 

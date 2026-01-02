@@ -4,10 +4,15 @@
 \alias{roll_min_var}
 \title{Rolling Optimizations to Minimize Variance}
 \usage{
-roll_min_var(sigma, total = 1, lower = 0, upper = 1)
+roll_min_var(sigma, mu = NULL, target = NULL, total = 1, lower = 0,
+  upper = 1)
 }
 \arguments{
 \item{sigma}{cube. Slices are covariance matrices.}
+
+\item{mu}{matrix. Rows are means and columns are variables.}
+
+\item{target}{vector. Rows are target means.}
 
 \item{total}{numeric. Sum of the weights.}
 

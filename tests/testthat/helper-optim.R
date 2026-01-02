@@ -1,19 +1,42 @@
-rollapplyr_optim <- function(f, mu = NULL, sigma = NULL) {
+rollapplyr_optim <- function(f, mu = NULL, sigma = NULL, target = NULL) {
   
-  if (!is.null(mu) && !is.null(sigma)) {
+  if (!is.null(mu) && !is.null(sigma) && !is.null(target)) {
 
     mu_attr <- attributes(mu)
 
-    n_rows_mu <- nrow(mu)
-    n_cols_mu <- ncol(mu)
-    result <- matrix(as.numeric(NA), n_rows_mu, n_cols_mu)
+    n_rows <- nrow(mu)
+    n_cols <- ncol(mu)
+    result <- matrix(as.numeric(NA), n_rows, n_cols)
 
-    for (i in 1:n_rows_mu) {
+    for (i in 1:n_rows) {
 
-      status_solve <- tryCatch(f(mu[i, ], sigma[ , , i]),
+      status_solve <- tryCatch(f(sigma = sigma[ , , i], mu = mu[i, ],
+                                 target = target[i]),
 
                                error = function(x) {
-                                 rep(NA, n_cols_mu)
+                                 rep(NA, n_cols)
+                               })
+
+      result[i, ] <- status_solve
+
+    }
+
+    attributes(result) <- mu_attr
+
+  } else if (!is.null(mu) && !is.null(sigma)) {
+
+    mu_attr <- attributes(mu)
+
+    n_rows <- nrow(mu)
+    n_cols <- ncol(mu)
+    result <- matrix(as.numeric(NA), n_rows, n_cols)
+
+    for (i in 1:n_rows) {
+
+      status_solve <- tryCatch(f(sigma = sigma[ , , i], mu = mu[i, ]),
+
+                               error = function(x) {
+                                 rep(NA, n_cols)
                                })
 
       result[i, ] <- status_solve
@@ -26,16 +49,16 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL) {
 
     mu_attr <- attributes(mu)
 
-    n_rows_mu <- nrow(mu)
-    n_cols_mu <- ncol(mu)
-    result <- matrix(as.numeric(NA), n_rows_mu, n_cols_mu)
+    n_rows <- nrow(mu)
+    n_cols <- ncol(mu)
+    result <- matrix(as.numeric(NA), n_rows, n_cols)
 
-    for (i in 1:n_rows_mu) {
+    for (i in 1:n_rows) {
 
-      status_solve <- tryCatch(f(mu[i, ]),
+      status_solve <- tryCatch(f(mu = mu[i, ]),
 
                                error = function(x) {
-                                 rep(NA, n_cols_mu)
+                                 rep(NA, n_cols)
                                })
 
       result[i, ] <- status_solve
@@ -49,16 +72,16 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL) {
     sigma_dimnames <- dimnames(sigma)
     
     dim_sigma <- dim(sigma)
-    n_rows_sigma <- dim_sigma[3]
-    n_cols_sigma <- dim_sigma[2]
-    result <- matrix(as.numeric(NA), n_rows_sigma, n_cols_sigma)
+    n_rows <- dim_sigma[3]
+    n_cols <- dim_sigma[2]
+    result <- matrix(as.numeric(NA), n_rows, n_cols)
     
-    for (i in 1:n_rows_sigma) {
+    for (i in 1:n_rows) {
       
-      status_solve <- tryCatch(f(sigma[ , , i]),
+      status_solve <- tryCatch(f(sigma = sigma[ , , i]),
 
                                error = function(x) {
-                                 rep(NA, n_cols_sigma)
+                                 rep(NA, n_cols)
                                })
       
       result[i, ] <- status_solve
@@ -77,11 +100,11 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL) {
 
 rollapplyr_xy <- function(f, x, y, width) {
   
-  n_rows_xy <- nrow(x)
-  n_cols_x <- ncol(x)
-  result <- matrix(as.numeric(NA), n_rows_xy, n_cols_x)
+  n_rows <- if (is.matrix(x)) nrow(x) else length(x)
+  n_cols <- if (is.matrix(x)) ncol(x) else 1
+  result <- matrix(as.numeric(NA), n_rows, n_cols)
   
-  for (i in 1:n_rows_xy) {
+  for (i in 1:n_rows) {
     
     x_subset <- x[max(1, i - width + 1):i, , drop = FALSE]
     y_subset <- y[max(1, i - width + 1):i, , drop = FALSE]
