@@ -40,9 +40,19 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
   if (Rf_isNull(mu) && Rf_isNull(target)) {
 
+    SEXP sexp_dim_sigma = sigma.attr("dim");
+
+    // if (Rf_isNull(sexp_dim_sigma)) {
+    //   stop("'sigma' must be cube with slices of covariance matrices");
+    // }
+
     IntegerVector dim_sigma = sigma.attr("dim");
     int n_rows = dim_sigma[2];
     int n_cols = dim_sigma[1];
+
+    // check 'sigma' argument for errors
+    check_sigma(dim_sigma[0], dim_sigma[1]);
+
     int n_size = n_cols + 1 + n_cols + n_cols;
     arma::cube arma_sigma(sigma.begin(), n_cols, n_cols, n_rows);
     arma::vec arma_lower(n_cols);
@@ -52,9 +62,6 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::mat arma_A(n_size, n_size);
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
-    
-    // check 'sigma' argument for errors
-    check_sigma(dim_sigma[0], dim_sigma[1]);
     
     arma_ones.ones();
     arma_diag.eye();
@@ -106,10 +113,36 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     int n_rows = rcpp_mu.nrow();
     int n_cols = rcpp_mu.ncol();
     int n_size = n_cols + 2 + n_cols + n_cols;
-    IntegerVector dim_sigma = sigma.attr("dim");
+    arma::cube arma_sigma;
+    SEXP sexp_dim_sigma = sigma.attr("dim");
+
+    if (!Rf_isNull(sexp_dim_sigma)) {
+
+      IntegerVector dim_sigma(sexp_dim_sigma);
+
+      check_rows(n_rows, dim_sigma[2]);
+      check_cols(n_cols, dim_sigma[1]);
+      check_sigma(dim_sigma[0], dim_sigma[1]);
+
+      arma_sigma = arma::cube(sigma.begin(), n_cols, n_cols, n_rows);
+
+    } else {
+      
+      // if (n_cols != 1) {
+      //   stop("number of columns in 'mu' must be one for univariate sigma");
+      // }
+
+      check_rows(n_rows, sigma.size());
+
+      arma_sigma = arma::cube(1, 1, n_rows);
+      for (int i = 0; i < n_rows; i++) {
+        arma_sigma(0, 0, i) = sigma[i];
+      }
+
+    }
+
     arma::mat arma_mu(rcpp_mu.begin(), n_rows, n_cols);
     arma::vec arma_target(rcpp_target.begin(), rcpp_target.size());
-    arma::cube arma_sigma(sigma.begin(), n_cols, n_cols, n_rows);
     arma::vec arma_lower(n_cols);
     arma::vec arma_upper(n_cols);
     arma::vec arma_ones(n_cols);
@@ -117,17 +150,6 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::mat arma_A(n_size, n_size);
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
-
-    // check 'mu' and 'sigma' arguments for errors
-    if (dim_sigma.size() == 3) {
-
-      check_rows(n_rows, dim_sigma[2]);
-      check_cols(n_cols, dim_sigma[1]);
-      check_sigma(dim_sigma[0], dim_sigma[1]);
-
-    } else {
-      check_rows(n_rows, sigma.size());
-    }
 
     arma_ones.ones();
     arma_diag.eye();
@@ -257,9 +279,35 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   int n_rows = mu.nrow();
   int n_cols = mu.ncol();
   int n_size = n_cols + 1 + n_cols + n_cols;
-  IntegerVector dim_sigma = sigma.attr("dim");
+  arma::cube arma_sigma;
+  SEXP sexp_dim_sigma = sigma.attr("dim");
+
+  if (!Rf_isNull(sexp_dim_sigma)) {
+
+    IntegerVector dim_sigma(sexp_dim_sigma);
+
+    check_rows(n_rows, dim_sigma[2]);
+    check_cols(n_cols, dim_sigma[1]);
+    check_sigma(dim_sigma[0], dim_sigma[1]);
+
+    arma_sigma = arma::cube(sigma.begin(), n_cols, n_cols, n_rows);
+
+  } else {
+
+      // if (n_cols != 1) {
+      //   stop("number of columns in 'mu' must be one for univariate sigma");
+      // }
+
+    check_rows(n_rows, sigma.size());
+
+    arma_sigma = arma::cube(1, 1, n_rows);
+    for (int i = 0; i < n_rows; i++) {
+      arma_sigma(0, 0, i) = sigma[i];
+    }
+
+  }
+
   arma::mat arma_mu(mu.begin(), n_rows, n_cols);
-  arma::cube arma_sigma(sigma.begin(), n_cols, n_cols, n_rows);
   arma::vec arma_lower(n_cols);
   arma::vec arma_upper(n_cols);
   arma::vec arma_ones(n_cols);
@@ -267,17 +315,6 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::mat arma_A(n_size, n_size);
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
-  
-  // check 'mu' and 'sigma' arguments for errors
-  if (dim_sigma.size() == 3) {
-
-    check_rows(n_rows, dim_sigma[2]);
-    check_cols(n_cols, dim_sigma[1]);
-    check_sigma(dim_sigma[0], dim_sigma[1]);
-
-  } else {
-    check_rows(n_rows, sigma.size());
-  }
   
   arma_ones.ones();
   arma_diag.eye();
@@ -331,37 +368,37 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   
   int n_rows;
   int n_cols;
-  SEXP dim_xx = xx.attr("dim");
-  SEXP dim_xy = xy.attr("dim");
+  SEXP sexp_dim_xx = xx.attr("dim");
+  SEXP sexp_dim_xy = xy.attr("dim");
 
-  if (!Rf_isNull(dim_xx) && !Rf_isNull(dim_xy)) {
+  if (!Rf_isNull(sexp_dim_xx) && !Rf_isNull(sexp_dim_xy)) {
 
-    IntegerVector dim_xxxx(dim_xx);
-    IntegerVector dim_xyxy(dim_xy);
+    IntegerVector dim_xx(sexp_dim_xx);
+    IntegerVector dim_xy(sexp_dim_xy);
 
-    // if (dim_xxxx.size() == 3) {
+    // if (dim_xx.size() == 3) {
     
-      n_rows = dim_xxxx[2];
-      n_cols = dim_xxxx[1];
+      n_rows = dim_xx[2];
+      n_cols = dim_xx[1];
 
-    // } else if (dim_xxxx.size() == 2) {
+    // } else if (dim_xx.size() == 2) {
 
-    //     n_rows = dim_xxxx[0];
-    //     n_cols = dim_xxxx[1];
+    //     n_rows = dim_xx[0];
+    //     n_cols = dim_xx[1];
 
     // }
 
-    check_sigma(dim_xxxx[0], dim_xxxx[1]);
+    check_sigma(dim_xx[0], dim_xx[1]);
 
-    // if (dim_xyxy.size() == 3) {
+    // if (dim_xy.size() == 3) {
 
-      check_rows(n_rows, dim_xyxy[2]);
-      check_cols(n_cols, dim_xyxy[0]);
+      check_rows(n_rows, dim_xy[2]);
+      check_cols(n_cols, dim_xy[0]);
 
-    // } else if (dim_xyxy.size() == 2) {
+    // } else if (dim_xy.size() == 2) {
 
-    //   check_rows(n_rows, dim_xyxy[1]);
-    //   check_cols(n_cols, dim_xyxy[0]);
+    //   check_rows(n_rows, dim_xy[1]);
+    //   check_cols(n_cols, dim_xy[0]);
 
     // }
 
