@@ -1,5 +1,4 @@
 # install.packages("ROI.plugin.quadprog")
-library(ROI.plugin.quadprog) # FIXME
 roi_min_var <- function(sigma, mu = NULL, target = NULL,
                         total = 1, lower = 0, upper = 1) {
   
@@ -31,7 +30,6 @@ roi_min_var <- function(sigma, mu = NULL, target = NULL,
 }
 
 # install.packages("ROI.plugin.glpk")
-library(ROI.plugin.glpk) # FIXME
 roi_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   
   # mu <- zoo::coredata(mu)
@@ -73,7 +71,6 @@ roi_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper =
 }
 
 # install.packages("ROI.plugin.qpoases")
-library(ROI.plugin.qpoases) # FIXME
 roi_min_rss <- function(x, y, total = 1, lower = 0, upper = 1) {
   
   x <- zoo::coredata(x)

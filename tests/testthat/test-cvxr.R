@@ -18,57 +18,64 @@ test_that("equivalent to CVXR::solve", {
                   list("random vector with 0's" = test_ls[[1]][ , 1]))
   test_zoo_y <- list("random vector with 0's" = test_ls[[1]][ , 3])
   
-  for (a in 1:length(test_ls)) {
+  for (b in 1:length(test_width)) {
+
+    width <- test_width[b]
+
+    for (a in 1:length(test_ls)) {
     
-    # test data
-    test_mu <- roll::roll_mean(test_ls[[a]], test_width)
-    test_sigma <- roll::roll_cov(test_ls[[a]], width = test_width)
-    
-    # rolling optimizations to minimize variance
-    # cvxr_min_var(test_sigma[ , , n_obs])
-    expect_equal(roll_min_var(test_sigma),
-                 rollapplyr_optim(cvxr_min_var, sigma = test_sigma),
-                 check.attributes = FALSE)
-    
-    # cvxr_min_var(test_sigma[ , , n_obs], test_mu[n_obs, ], test_target_mu[n_obs])
-    expect_equal(roll_min_var(test_sigma, mu = test_mu,
-                              target = test_target_mu),
-                 rollapplyr_optim(cvxr_min_var, sigma = test_sigma,
-                                  mu = test_mu, target = test_target_mu),
-                 check.attributes = FALSE)
-    
-    # rolling optimizations to maximize mean
-    # cvxr_max_mean(test_mu[n_obs, ])
-    expect_equal(roll_max_mean(test_mu),
-                 rollapplyr_optim(cvxr_max_mean, mu = test_mu),
-                 check.attributes = FALSE, tolerance = 1e-5)
-    
-    # rolling optimizations to maximize utility
-    # cvxr_max_utility(test_mu[n_obs, ], test_sigma[ , , n_obs])
-    expect_equal(roll_max_utility(test_mu, test_sigma),
-                 rollapplyr_optim(cvxr_max_utility, mu = test_mu,
-                                  sigma = test_sigma),
-                 check.attributes = FALSE)
-    
-  }
-  
-  for (ax in 1:length(test_zoo_x)) {
-    for (ay in 1:length(test_zoo_y)) {
-      
       # test data
-      test_xx <- roll::roll_crossprod(test_zoo_x[[ax]], test_zoo_x[[ax]],
-                                      test_width, min_obs = 1)
-      test_xy <- roll::roll_crossprod(test_zoo_x[[ax]], test_zoo_y[[ay]],
-                                      test_width, min_obs = 1)
+      test_mu <- roll::roll_mean(test_ls[[a]], width)
+      test_sigma <- roll::roll_cov(test_ls[[a]], width = width)
       
-      # rolling optimizations to minimize residual sum of squares
-      # cvxr_min_rss(test_zoo_x[[ax]], test_zoo_y[[ay]])
-      expect_equal(roll_min_rss(test_xx, test_xy),
-                   rollapplyr_xy(cvxr_min_rss, test_zoo_x[[ax]],
-                                 test_zoo_y[[ay]], test_width),
+      # rolling optimizations to minimize variance
+      # cvxr_min_var(test_sigma[ , , n_obs])
+      expect_equal(roll_min_var(test_sigma),
+                  rollapplyr_optim(cvxr_min_var, sigma = test_sigma),
+                  check.attributes = FALSE)
+      
+      # cvxr_min_var(test_sigma[ , , n_obs], test_mu[n_obs, ], test_target_mu[n_obs])
+      expect_equal(roll_min_var(test_sigma, mu = test_mu,
+                                target = test_target_mu),
+                  rollapplyr_optim(cvxr_min_var, sigma = test_sigma,
+                                    mu = test_mu, target = test_target_mu),
+                  check.attributes = FALSE)
+      
+      # rolling optimizations to maximize mean
+      # cvxr_max_mean(test_mu[n_obs, ])
+      expect_equal(roll_max_mean(test_mu),
+                   rollapplyr_optim(cvxr_max_mean, mu = test_mu),
+                   check.attributes = FALSE, tolerance = test_tol)
+      
+      # rolling optimizations to maximize utility
+      # cvxr_max_utility(test_mu[n_obs, ], test_sigma[ , , n_obs])
+      expect_equal(roll_max_utility(test_mu, test_sigma),
+                   rollapplyr_optim(cvxr_max_utility, mu = test_mu,
+                                    sigma = test_sigma),
                    check.attributes = FALSE)
       
     }
+    
+    for (ax in 1:length(test_zoo_x)) {
+      for (ay in 1:length(test_zoo_y)) {
+        
+        # test data
+        test_xx <- roll::roll_crossprod(test_zoo_x[[ax]], test_zoo_x[[ax]],
+                                        width, min_obs = test_min_obs[1])
+        test_xy <- roll::roll_crossprod(test_zoo_x[[ax]], test_zoo_y[[ay]],
+                                        width, min_obs = test_min_obs[1])
+        
+        # rolling optimizations to minimize residual sum of squares
+        # cvxr_min_rss(test_zoo_x[[ax]], test_zoo_y[[ay]])
+        expect_equal(roll_min_rss(test_xx, test_xy),
+                    rollapplyr_xy(cvxr_min_rss, test_zoo_x[[ax]],
+                                  test_zoo_y[[ay]], width),
+                    check.attributes = FALSE, tolerance = test_tol)
+        
+      }
+    }
+
   }
+
   
 })

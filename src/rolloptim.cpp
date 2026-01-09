@@ -45,8 +45,8 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     // if (Rf_isNull(sexp_dim_sigma)) {
     //   stop("'sigma' must be cube with slices of covariance matrices");
     // }
-
-    IntegerVector dim_sigma = sigma.attr("dim");
+    
+    IntegerVector dim_sigma(sexp_dim_sigma);
     int n_rows = dim_sigma[2];
     int n_cols = dim_sigma[1];
 
