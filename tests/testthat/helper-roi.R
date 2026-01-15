@@ -32,8 +32,7 @@ roi_min_var <- function(sigma, mu = NULL, target = NULL,
 # install.packages("ROI.plugin.glpk")
 roi_max_mean <- function(mu, total = 1, lower = 0, upper = 1) {
   
-  # mu <- zoo::coredata(mu)
-  mu <- as.numeric(zoo::coredata(mu))
+  mu <- zoo::coredata(mu)
   
   n_cols <- length(mu)
   
@@ -73,8 +72,8 @@ roi_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper =
 # install.packages("ROI.plugin.qpoases")
 roi_min_rss <- function(x, y, total = 1, lower = 0, upper = 1) {
   
-  x <- zoo::coredata(x)
-  y <- zoo::coredata(y)
+  x <- as.matrix(zoo::coredata(x))
+  y <- as.matrix(zoo::coredata(y))
   
   n_cols <- ncol(x)
   

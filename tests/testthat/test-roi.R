@@ -12,7 +12,8 @@ test_that("equivalent to ROI::ROI_solve", {
   }
   
   # test data
-  test_zoo_x <- lapply(test_ls, function(x){x[ , 1:2]})
+  test_zoo_x <- c(lapply(test_ls, function(x){x[ , 1:2]}),
+                  list("random vector with 0's" = test_ls[[1]][ , 1]))
   test_zoo_y <- list("random vector with 0's" = test_ls[[1]][ , 3])
   
   for (b in 1:length(test_width)) {
