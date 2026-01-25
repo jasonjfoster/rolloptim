@@ -33,6 +33,41 @@ void check_target(const SEXP& mu, const SEXP& target,
   
 }
 
+void check_finite(const double& bound, const char* name) {
+
+  if (std::isnan(bound) || std::isinf(bound)) {
+    stop("'%s' must be finite", name);
+  }
+
+}
+
+void check_bounds(const double& lower, const double& upper) {
+
+  check_finite(lower, "lower");
+  check_finite(upper, "upper");
+
+  if (lower > upper) {
+    stop("value of 'lower' must be less than or equal to value of 'upper'");
+  }
+
+}
+
+void check_total(const int& n_cols, const double& total,
+                 const double& lower, const double& upper) {
+    
+    double lower_total = (double)n_cols * lower;
+    double upper_total = (double)n_cols * upper;
+
+    check_finite(total, "total");
+
+    if ((total < lower_total) || (total > upper_total)) {
+
+      stop("'total' must be between %f and %f", lower_total,
+           upper_total);
+
+    }
+}
+
 // [[Rcpp::export(.roll_min_var)]]
 NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
                            const SEXP& target, const double& total,
@@ -63,6 +98,9 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
     
+    check_bounds(lower, upper);
+    check_total(n_cols, total, lower, upper);
+
     arma_ones.ones();
     arma_diag.eye();
     arma_lower.fill(lower);
@@ -151,6 +189,9 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
 
+    check_bounds(lower, upper);
+    check_total(n_cols, total, lower, upper);
+
     arma_ones.ones();
     arma_diag.eye();
     arma_lower.fill(lower);
@@ -210,10 +251,14 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma,
                             const SEXP& target, const double& total,
                             const double& lower, const double& upper) {
 
-  if (!Rf_isNull(sigma) || !Rf_isNull(target)) {
+  if (!Rf_isNull(sigma)) {
+    warning("'sigma' is only supported for linear constraints");
+  }
+
+  if (!Rf_isNull(target)) {
     warning("'target' is only supported for linear constraints");
   }
-  
+
   int n_rows = mu.nrow();
   int n_cols = mu.ncol();
   int n_size = n_cols + 1 + n_cols + n_cols;
@@ -225,7 +270,10 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma,
   arma::mat arma_A(n_size, n_size);
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
-  
+
+  check_bounds(lower, upper);
+  check_total(n_cols, total, lower, upper);
+
   arma_ones.ones();
   arma_diag.eye();
   arma_lower.fill(lower);
@@ -316,6 +364,9 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
   
+  check_bounds(lower, upper);
+  check_total(n_cols, total, lower, upper);
+
   arma_ones.ones();
   arma_diag.eye();
   arma_lower.fill(lower);
@@ -419,6 +470,9 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   arma::mat arma_A(n_size, n_size);
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
+
+  check_bounds(lower, upper);
+  check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
   arma_diag.eye();
