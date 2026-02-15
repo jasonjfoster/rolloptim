@@ -5,6 +5,7 @@
 
 #include <RcppArmadillo.h>
 #include <RcppParallel.h>
+#include "rolloptim_check.h"
 using namespace Rcpp;
 using namespace RcppParallel;
 

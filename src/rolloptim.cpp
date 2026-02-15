@@ -1,73 +1,5 @@
 #include "rolloptim.h"
 
-void check_rows(const int& n_rows_mu, const int& n_slices_sigma) {
-  
-  if (n_rows_mu != n_slices_sigma) {
-    stop("number of rows in 'mu' must equal the number of slices in 'sigma'");
-  }
-  
-}
-
-void check_cols(const int& n_cols_mu, const int& n_cols_sigma) {
-  
-  if (n_cols_mu != n_cols_sigma) {
-    stop("number of columns in 'mu' must equal the number of columns in 'sigma'");
-  }
-  
-}
-
-void check_sigma(const int& n_rows_sigma, const int& n_cols_sigma) {
-  
-  if (n_rows_sigma != n_cols_sigma) {
-    stop("dimensions of 'sigma' must be square");
-  }
-  
-}
-
-void check_target(const SEXP& mu, const SEXP& target,
-                  const char* name) {
-  
-  if (Rf_isNull(mu) || Rf_isNull(target)) {
-    stop("requires both '%s' and 'target'", name);
-  }
-  
-}
-
-void check_finite(const double& bound, const char* name) {
-
-  if (std::isnan(bound) || std::isinf(bound)) {
-    stop("'%s' must be finite", name);
-  }
-
-}
-
-void check_bounds(const double& lower, const double& upper) {
-
-  check_finite(lower, "lower");
-  check_finite(upper, "upper");
-
-  if (lower > upper) {
-    stop("value of 'lower' must be less than or equal to value of 'upper'");
-  }
-
-}
-
-void check_total(const int& n_cols, const double& total,
-                 const double& lower, const double& upper) {
-    
-    double lower_total = (double)n_cols * lower;
-    double upper_total = (double)n_cols * upper;
-
-    check_finite(total, "total");
-
-    if ((total < lower_total) || (total > upper_total)) {
-
-      stop("'total' must be between %f and %f", lower_total,
-           upper_total);
-
-    }
-}
-
 // [[Rcpp::export(.roll_min_var)]]
 NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
                            const SEXP& target, const double& total,
@@ -86,7 +18,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     int n_cols = dim_sigma[1];
 
     // check 'sigma' argument for errors
-    check_sigma(dim_sigma[0], dim_sigma[1]);
+    rolloptim::check_square(dim_sigma[0], dim_sigma[1], "sigma");
 
     int n_size = n_cols + 1 + n_cols + n_cols;
     arma::cube arma_sigma(sigma.begin(), n_cols, n_cols, n_rows);
@@ -98,8 +30,8 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
     
-    check_bounds(lower, upper);
-    check_total(n_cols, total, lower, upper);
+    rolloptim::check_bounds(lower, upper);
+    rolloptim::check_total(n_cols, total, lower, upper);
 
     arma_ones.ones();
     arma_diag.eye();
@@ -143,7 +75,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
   } else {
 
-    check_target(mu, target, "mu");
+    rolloptim::check_target(mu, target, "mu");
 
     NumericMatrix rcpp_mu(mu);
     NumericVector rcpp_target(target);
@@ -158,9 +90,9 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
       IntegerVector dim_sigma(sexp_dim_sigma);
 
-      check_rows(n_rows, dim_sigma[2]);
-      check_cols(n_cols, dim_sigma[1]);
-      check_sigma(dim_sigma[0], dim_sigma[1]);
+      rolloptim::check_rows_equal(n_rows, dim_sigma[2], "mu", "sigma");
+      rolloptim::check_cols_equal(n_cols, dim_sigma[1], "mu", "sigma");
+      rolloptim::check_square(dim_sigma[0], dim_sigma[1], "sigma");
 
       arma_sigma = arma::cube(sigma.begin(), n_cols, n_cols, n_rows);
 
@@ -170,7 +102,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
       //   stop("number of columns in 'mu' must be one for univariate sigma");
       // }
 
-      check_rows(n_rows, sigma.size());
+      rolloptim::check_rows_equal(n_rows, sigma.size(), "mu", "sigma");
 
       arma_sigma = arma::cube(1, 1, n_rows);
       for (int i = 0; i < n_rows; i++) {
@@ -189,8 +121,8 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
 
-    check_bounds(lower, upper);
-    check_total(n_cols, total, lower, upper);
+    rolloptim::check_bounds(lower, upper);
+    rolloptim::check_total(n_cols, total, lower, upper);
 
     arma_ones.ones();
     arma_diag.eye();
@@ -271,8 +203,8 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma,
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
 
-  check_bounds(lower, upper);
-  check_total(n_cols, total, lower, upper);
+  rolloptim::check_bounds(lower, upper);
+  rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
   arma_diag.eye();
@@ -334,9 +266,9 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
 
     IntegerVector dim_sigma(sexp_dim_sigma);
 
-    check_rows(n_rows, dim_sigma[2]);
-    check_cols(n_cols, dim_sigma[1]);
-    check_sigma(dim_sigma[0], dim_sigma[1]);
+    rolloptim::check_rows_equal(n_rows, dim_sigma[2], "mu", "sigma");
+    rolloptim::check_cols_equal(n_cols, dim_sigma[1], "mu", "sigma");
+    rolloptim::check_square(dim_sigma[0], dim_sigma[1], "sigma");
 
     arma_sigma = arma::cube(sigma.begin(), n_cols, n_cols, n_rows);
 
@@ -346,7 +278,7 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
       //   stop("number of columns in 'mu' must be one for univariate sigma");
       // }
 
-    check_rows(n_rows, sigma.size());
+    rolloptim::check_rows_equal(n_rows, sigma.size(), "mu", "sigma");
 
     arma_sigma = arma::cube(1, 1, n_rows);
     for (int i = 0; i < n_rows; i++) {
@@ -364,8 +296,8 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
   
-  check_bounds(lower, upper);
-  check_total(n_cols, total, lower, upper);
+  rolloptim::check_bounds(lower, upper);
+  rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
   arma_diag.eye();
@@ -439,17 +371,17 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
 
     // }
 
-    check_sigma(dim_xx[0], dim_xx[1]);
+    rolloptim::check_square(dim_xx[0], dim_xx[1], "sigma");
 
     // if (dim_xy.size() == 3) {
 
-      check_rows(n_rows, dim_xy[2]);
-      check_cols(n_cols, dim_xy[0]);
+      rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
+      rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
 
     // } else if (dim_xy.size() == 2) {
 
-    //   check_rows(n_rows, dim_xy[1]);
-    //   check_cols(n_cols, dim_xy[0]);
+    //   rolloptim::check_cols_equal(n_rows, dim_xy[1], "mu", "sigma");
+    //   rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
 
     // }
 
@@ -471,8 +403,8 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
 
-  check_bounds(lower, upper);
-  check_total(n_cols, total, lower, upper);
+  rolloptim::check_bounds(lower, upper);
+  rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
   arma_diag.eye();
