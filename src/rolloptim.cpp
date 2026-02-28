@@ -296,6 +296,7 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
   
+  rolloptim::check_nonneg_finite(lambda, "lambda");
   rolloptim::check_bounds(lower, upper);
   rolloptim::check_total(n_cols, total, lower, upper);
 
