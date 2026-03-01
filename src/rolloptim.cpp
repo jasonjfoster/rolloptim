@@ -66,10 +66,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     parallelFor(0, n_rows, roll_min_var);
     
     NumericMatrix result(wrap(arma_weights));
-    List dimnames_sigma = sigma.attr("dimnames");
-    if (dimnames_sigma.size() > 1) {
-      result.attr("dimnames") = List::create(R_NilValue, dimnames_sigma[1]);
-    }
+    rolloptim::min_dimnames(result, sigma);
     
     return result;
 
@@ -163,14 +160,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     parallelFor(0, n_rows, roll_min_var);
 
     NumericMatrix result(wrap(arma_weights));
-    List dimnames = rcpp_mu.attr("dimnames");
-    result.attr("dimnames") = dimnames;
-    result.attr("index") = rcpp_mu.attr("index");
-    result.attr(".indexCLASS") = rcpp_mu.attr(".indexCLASS");
-    result.attr(".indexTZ") = rcpp_mu.attr(".indexTZ");
-    result.attr("tclass") = rcpp_mu.attr("tclass");
-    result.attr("tzone") = rcpp_mu.attr("tzone");
-    result.attr("class") = rcpp_mu.attr("class");
+    rolloptim::xts_attr(result, rcpp_mu);
     
     return result;
 
@@ -238,14 +228,7 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma,
   parallelFor(0, n_rows, roll_max_mean);
   
   NumericMatrix result(wrap(arma_weights));
-  List dimnames = mu.attr("dimnames");
-  result.attr("dimnames") = dimnames;
-  result.attr("index") = mu.attr("index");
-  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
-  result.attr(".indexTZ") = mu.attr(".indexTZ");
-  result.attr("tclass") = mu.attr("tclass");
-  result.attr("tzone") = mu.attr("tzone");
-  result.attr("class") = mu.attr("class");
+  rolloptim::xts_attr(result, mu);
   
   return result;
   
@@ -332,14 +315,7 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   parallelFor(0, n_rows, roll_max_utility);
   
   NumericMatrix result(wrap(arma_weights));
-  List dimnames = mu.attr("dimnames");
-  result.attr("dimnames") = dimnames;
-  result.attr("index") = mu.attr("index");
-  result.attr(".indexCLASS") = mu.attr(".indexCLASS");
-  result.attr(".indexTZ") = mu.attr(".indexTZ");
-  result.attr("tclass") = mu.attr("tclass");
-  result.attr("tzone") = mu.attr("tzone");
-  result.attr("class") = mu.attr("class");
+  rolloptim::xts_attr(result, mu);
   
   return result;
   
@@ -439,10 +415,7 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   parallelFor(0, n_rows, roll_max_utility);
   
   NumericMatrix result(wrap(arma_weights));
-  List dimnames_xx = xx.attr("dimnames");
-  if (dimnames_xx.size() > 1) {
-    result.attr("dimnames") = List::create(R_NilValue, dimnames_xx[1]);
-  }
+  rolloptim::min_dimnames(result, xx);
   
   return result;
   
