@@ -80,17 +80,6 @@ inline void check_total(const int& n_cols, const double& total,
 
 }
 
-// consolidated weights check
-inline void check_weights(const int& n_rows, const int& width,
-                          const arma::vec& weights, const char* context) {
-
-  if ((int)weights.size() < std::min(width, n_rows)) {
-    stop("length of 'weights' must be greater than or equal to the number of rows in %s or 'width'",
-          context);
-  }
-
-}
-
 // target check for optimization
 inline void check_target(const SEXP& x, const SEXP& target,
                          const char* name) {
