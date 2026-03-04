@@ -1,4 +1,4 @@
-// todo (roll >= 1.2.1): use namespace roll for check_rows_equal and check_weights
+// todo (roll >= 1.2.1): use namespace roll for check_rows_equal
 
 #ifndef ROLLOPTIM_CHECK_H
 #define ROLLOPTIM_CHECK_H
