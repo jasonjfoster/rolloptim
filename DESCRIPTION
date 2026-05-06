@@ -1,8 +1,7 @@
 Package: rolloptim
 Type: Package
 Title: Rolling Optimizations
-Version: 1.0
-Date: YYYY-MM-DD
+Version: 1.0.0
 Authors@R: person("Jason", "Foster", , "jason.j.foster@gmail.com", c("aut", "cre"))
 Description: Analytical computation of rolling optimizations for time-series data.
 License: GPL (>= 2)
@@ -15,4 +14,4 @@ SystemRequirements: GNU make
 Encoding: UTF-8
 Suggests: covr, testthat, zoo, roll (>= 1.1.7), ROI, ROI.plugin.quadprog, ROI.plugin.glpk, ROI.plugin.qpoases, CVXR
 Config/roxygen2/old_usage: TRUE
-Config/roxygen2/version: 7.3.3.9000
+Config/roxygen2/version: 8.0.0
