@@ -19,16 +19,16 @@ The package supports rolling optimizations with constraints via the total, lower
 
 Install the development version from GitHub:
 
-``` r
-# install.packages("devtools")
-devtools::install_github("jasonjfoster/rolloptim")
-``` 
+```r
+# install.packages("pak")
+pak::pak("jasonjfoster/rolloptim")
+```
 
 ## Usage
 
 Load the package and supply a dataset:
 
-``` r
+```r
 library(rolloptim) # roll (>= 1.1.7)
 
 n_vars <- 3
@@ -41,6 +41,7 @@ xx <- roll::roll_crossprod(x, x, 5)
 xy <- roll::roll_crossprod(x, y, 5)
 sigma <- roll::roll_cov(x, width = 5)
 ```
+
 Then, to compute rolling optimizations, use the functions:
 
 ```r
