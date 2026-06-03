@@ -15,7 +15,7 @@
   \packageAuthor{rolloptim}
 }
 \references{
-  Markowitz, H.M. (1952). "Portfolio Selection." \emph{The Journal of Finance}, 7(1), 77–91.
-  
-  Tam, A. (2021). "Lagrangians and Portfolio Optimization." \emph{https://www.adrian.idv.hk/2021-06-22-kkt/}.
+  Markowitz, H.M. (1952). "Portfolio Selection." \emph{The Journal of Finance}, 7(1), 77-91. \doi{10.1111/j.1540-6261.1952.tb01525.x}
+
+  Tam, A. (2021). "Lagrangians and Portfolio Optimization." \url{https://www.adrian.idv.hk/2021-06-22-kkt/}
 }
