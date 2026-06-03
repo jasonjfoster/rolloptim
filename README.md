@@ -17,7 +17,13 @@ The package supports rolling optimizations with constraints via the total, lower
 
 ## Installation
 
-Install the development version from GitHub:
+Install the released version from CRAN:
+
+```r
+# install.packages("rolloptim")
+```
+
+Or the development version from GitHub:
 
 ```r
 # install.packages("pak")
@@ -62,6 +68,6 @@ Constraint handling is implemented by default (see the `total`, `lower`, and `up
 
 ## References
 
-Markowitz, H.M. (1952). "Portfolio Selection." *The Journal of Finance* 7 (1): 77-91. <doi:10.1111/j.1540-6261.1952.tb01525.x>
+Kuhn, H.W. and Tucker, A.W. (1951). "Nonlinear Programming." In *Proceedings of the Second Berkeley Symposium on Mathematical Statistics and Probability*, edited by J. Neyman, 481-492. University of California Press. <doi:10.1525/9780520411586-036>
 
-Tam, A. (2021). "Lagrangians and Portfolio Optimization." <https://www.adrian.idv.hk/2021-06-22-kkt/>
+Markowitz, H.M. (1952). "Portfolio Selection." *The Journal of Finance* 7 (1): 77-91. <doi:10.1111/j.1540-6261.1952.tb01525.x>

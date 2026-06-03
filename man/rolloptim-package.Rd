@@ -15,7 +15,7 @@
   \packageAuthor{rolloptim}
 }
 \references{
-  Markowitz, H.M. (1952). "Portfolio Selection." \emph{The Journal of Finance}, 7(1), 77-91. \doi{10.1111/j.1540-6261.1952.tb01525.x}
+  Kuhn, H.W. and Tucker, A.W. (1951). "Nonlinear Programming." In \emph{Proceedings of the Second Berkeley Symposium on Mathematical Statistics and Probability}, edited by J. Neyman, 481-492. University of California Press. \doi{10.1525/9780520411586-036}
 
-  Tam, A. (2021). "Lagrangians and Portfolio Optimization." \url{https://www.adrian.idv.hk/2021-06-22-kkt/}
+  Markowitz, H.M. (1952). "Portfolio Selection." \emph{The Journal of Finance}, 7(1), 77-91. \doi{10.1111/j.1540-6261.1952.tb01525.x}
 }
