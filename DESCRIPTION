@@ -1,17 +1,49 @@
-Package: rolloptim
 Type: Package
+Package: rolloptim
 Title: Rolling Optimizations
 Version: 1.0.0
-Authors@R: person("Jason", "Foster", , "jason.j.foster@gmail.com", c("aut", "cre"))
-Description: Analytical computation of rolling optimization for time-series data. The 'rolloptim' package solves constrained quadratic and linear programs in closed form by applying Lagrangian multipliers and the Karush-Kuhn-Tucker conditions (Kuhn and Tucker, 1951, <doi:10.1525/9780520411586-036>) to perform mean-variance portfolio optimization (Markowitz, 1952, <doi:10.1111/j.1540-6261.1952.tb01525.x>) over rolling windows. For each window, the analytical solution computes the optimal weights that minimize variance, maximize expected return, minimize residual sum of squares, or maximize quadratic utility, subject to a total-weight equality constraint and box bounds on each weight. Use cases include mean-variance portfolio optimization, expected-return maximization, and constrained regression. The package supports rolling optimizations with constraints via the total, lower, and upper arguments. The implementation accepts rolling moments computed via the 'roll' package and uses 'RcppArmadillo' for linear algebra, with parallelism across windows provided by 'RcppParallel'.
+Authors@R: 
+    person("Jason", "Foster", , "jason.j.foster@gmail.com", role = c("aut", "cre"))
+Description: Analytical computation of rolling optimization for
+    time-series data. The 'rolloptim' package solves constrained quadratic
+    and linear programs in closed form by applying Lagrangian multipliers
+    and the Karush-Kuhn-Tucker conditions (Kuhn and Tucker, 1951,
+    <doi:10.1525/9780520411586-036>) to perform mean-variance portfolio
+    optimization (Markowitz, 1952,
+    <doi:10.1111/j.1540-6261.1952.tb01525.x>) over rolling windows. For
+    each window, the analytical solution computes the optimal weights that
+    minimize variance, maximize expected return, minimize residual sum of
+    squares, or maximize quadratic utility, subject to a total-weight
+    equality constraint and box bounds on each weight. Use cases include
+    mean-variance portfolio optimization, expected-return maximization,
+    and constrained regression. The package supports rolling optimizations
+    with constraints via the total, lower, and upper arguments. The
+    implementation accepts rolling moments computed via the 'roll' package
+    and uses 'RcppArmadillo' for linear algebra, with parallelism across
+    windows provided by 'RcppParallel'.
 License: GPL (>= 2)
 URL: https://github.com/jasonjfoster/rolloptim
 BugReports: https://github.com/jasonjfoster/rolloptim/issues
-Depends: R (>= 3.5.0)
-Imports: Rcpp, RcppParallel
-LinkingTo: Rcpp, RcppArmadillo, RcppParallel
-SystemRequirements: GNU make
-Encoding: UTF-8
-Suggests: covr, testthat, zoo, roll (>= 1.1.7), ROI, ROI.plugin.quadprog, ROI.plugin.glpk, ROI.plugin.qpoases, CVXR
+Depends: 
+    R (>= 3.5.0)
+Imports: 
+    Rcpp,
+    RcppParallel
+Suggests: 
+    covr,
+    CVXR,
+    ROI,
+    ROI.plugin.glpk,
+    ROI.plugin.qpoases,
+    ROI.plugin.quadprog,
+    roll (>= 1.1.7),
+    testthat,
+    zoo
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo,
+    RcppParallel
 Config/roxygen2/old_usage: TRUE
 Config/roxygen2/version: 8.0.0
+Encoding: UTF-8
+SystemRequirements: GNU make
