@@ -7,7 +7,7 @@
 
 'rolloptim' provides analytical computation of rolling optimization for time-series data.
 
-The 'rolloptim' package solves constrained quadratic and linear programs in closed form by applying Lagrangian multipliers and the Karush-Kuhn-Tucker conditions to perform mean-variance portfolio optimization (Markowitz, 1952, <doi:10.1111/j.1540-6261.1952.tb01525.x>) over rolling windows. For each window, the analytical solution computes the optimal weights that minimize variance, maximize expected return, minimize residual sum of squares, or maximize quadratic utility, subject to a total-weight equality constraint and box bounds on each weight. Use cases include:
+The 'rolloptim' package solves constrained quadratic and linear programs in closed form by applying Lagrangian multipliers and the Karush-Kuhn-Tucker conditions (Kuhn and Tucker, 1951, <doi:10.1525/9780520411586-036>) to perform mean-variance portfolio optimization (Markowitz, 1952, <doi:10.1111/j.1540-6261.1952.tb01525.x>) over rolling windows. For each window, the analytical solution computes the optimal weights that minimize variance, maximize expected return, minimize residual sum of squares, or maximize quadratic utility, subject to a total-weight equality constraint and box bounds on each weight. Use cases include:
 
 * **Mean-variance optimization**: constructing portfolios that minimize variance or maximize utility subject to a budget and bounds
 * **Expected-return maximization**: allocating to highest-mean assets under linear constraints
