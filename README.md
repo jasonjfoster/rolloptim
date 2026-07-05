@@ -20,7 +20,7 @@ The package supports rolling optimizations with constraints via the total, lower
 Install the released version from CRAN:
 
 ```r
-# install.packages("rolloptim")
+install.packages("rolloptim")
 ```
 
 Or the development version from GitHub:
