@@ -1,7 +1,9 @@
 # rolloptim
 
 [![](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/jasonjfoster/rolloptim/actions/workflows/check-standard.yaml)
+[![](https://www.r-pkg.org/badges/version/rolloptim)](https://cran.r-project.org/package=rolloptim)
 [![](https://codecov.io/gh/jasonjfoster/rolloptim/graph/badge.svg)](https://app.codecov.io/github/jasonjfoster/rolloptim)
+[![](https://cranlogs.r-pkg.org/badges/rolloptim?color=brightgreen)](https://www.r-pkg.org/pkg/rolloptim)
 
 ## Overview
 
