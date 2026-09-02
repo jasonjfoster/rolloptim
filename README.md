@@ -50,7 +50,7 @@ xy <- roll::roll_crossprod(x, y, 5)
 sigma <- roll::roll_cov(x, width = 5)
 ```
 
-Then, to compute rolling optimizations, use the functions:
+Then, to compute rolling optimizations, use the `roll_min_var()`, `roll_max_mean()`, `roll_min_rss()`, and `roll_max_utility()` functions:
 
 ```r
 # rolling optimization to minimize variance
@@ -66,7 +66,7 @@ roll_min_rss(xx, xy)
 roll_max_utility(mu, sigma, lambda = 1)
 ```
 
-Constraint handling is implemented by default (see the `total`, `lower`, and `upper` arguments).
+Constraints are applied by default (see the `total`, `lower`, and `upper` arguments).
 
 ## References
 
