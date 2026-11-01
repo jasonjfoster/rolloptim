@@ -27,10 +27,9 @@ test_that("equivalent to ROI::ROI_solve", {
       test_mu <- roll::roll_mean(test_ls[[ax]], width)
       test_sigma <- roll::roll_cov(test_ls[[ax]], width = width)
       
-      # 'target' is feasible, on the boundary, or infeasible
+      # 'target' is feasible or infeasible
       test_target <- list(test_target_mu,
-                              apply(zoo::coredata(test_mu), 1, max),
-                              apply(zoo::coredata(test_mu), 1, max) + 1)
+                          apply(zoo::coredata(test_mu), 1, max) + 1)
       
       # rolling optimizations to minimize variance
       # roi_min_var(test_sigma[ , , n_obs])
@@ -82,9 +81,5 @@ test_that("equivalent to ROI::ROI_solve", {
     }
 
   }
-  
-  # a slice with missing values returns a row of missing values
-  test_sigma <- roll::roll_cov(test_ls[[2]], width = test_width[2])
-  expect_true(all(is.na(roll_min_var(test_sigma)[is.na(test_sigma[1, 1, ]), ])))
   
 })

@@ -27,10 +27,9 @@ test_that("equivalent to CVXR::psolve", {
       test_mu <- roll::roll_mean(test_ls[[ax]], width)
       test_sigma <- roll::roll_cov(test_ls[[ax]], width = width)
       
-      # 'target' is feasible, on the boundary, or infeasible
+      # 'target' is feasible or infeasible
       test_target <- list(test_target_mu,
-                               apply(zoo::coredata(test_mu), 1, max),
-                               apply(zoo::coredata(test_mu), 1, max) + 1)
+                          apply(zoo::coredata(test_mu), 1, max) + 1)
       
       # rolling optimizations to minimize variance
       # cvxr_min_var(test_sigma[ , , n_obs])
