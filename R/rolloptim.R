@@ -8,8 +8,17 @@
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
 #' @param upper numeric. Upper bound of the weights.
+#' @details Every combination of active lower and upper bounds is enumerated within each window,
+#' the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+#' smallest variance is kept. If \code{mu} and \code{target} are supplied then the expected return
+#' must be greater than or equal to \code{target}.
+#'
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+#' with no feasible solution, including one whose moments contain missing values or whose
+#' \code{target} is unattainable, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
-#' optimizations to minimize variance.
+#' optimizations to minimize variance, or a matrix with each row the rolling optimizations
+#' if \code{mu} is \code{NULL}.
 #' @examples
 #' if (requireNamespace("roll", quietly = TRUE)) {
 #' 
@@ -46,6 +55,13 @@ roll_min_var <- function(sigma, mu = NULL, target = NULL,
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
 #' @param upper numeric. Upper bound of the weights.
+#' @details Every combination of active lower and upper bounds is enumerated within each window,
+#' the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+#' largest mean is kept.
+#'
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. \code{sigma}
+#' and \code{target} are not supported, so a warning is given and the arguments are ignored. A window
+#' with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
 #' optimizations to maximize mean.
 #' @examples
@@ -84,6 +100,13 @@ roll_max_mean <- function(mu, sigma = NULL, target = NULL,
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
 #' @param upper numeric. Upper bound of the weights.
+#' @details Every combination of active lower and upper bounds is enumerated within each window,
+#' the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+#' largest quadratic utility, the expected return less one half of \code{lambda} times the
+#' variance, is kept.
+#'
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+#' with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
 #' optimizations to maximize utility.
 #' @examples
@@ -121,8 +144,15 @@ roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper 
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
 #' @param upper numeric. Upper bound of the weights.
-#' @return An object of the same class and dimension as \code{x} with the rolling
-#' optimizations to minimize residual sum of squares.
+#' @details Every combination of active lower and upper bounds is enumerated within each window,
+#' the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+#' smallest residual sum of squares is kept, so the result is the constrained least squares
+#' coefficients implied by the crossproducts \code{xx} and \code{xy}.
+#'
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+#' with no feasible solution, including one whose crossproducts contain missing values, returns
+#' \code{NA}.
+#' @return A matrix with each row the rolling optimizations to minimize residual sum of squares.
 #' @examples
 #' if (requireNamespace("roll", quietly = TRUE)) {
 #' 

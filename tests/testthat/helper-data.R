@@ -15,6 +15,11 @@ test_tol <- 1e-4
 test_ls <- list("random matrix with 0's" =
                   matrix(sample(c(0, rnorm(n_size - 1)), n_size, replace = TRUE,
                                 prob = rep(1 / n_size, n_size)),
+                         nrow = n_obs, ncol = n_vars),
+                
+                "random matrix with 0's and NA's" =
+                  matrix(sample(c(NA, 0, rnorm(n_size - 2)), n_size, replace = TRUE,
+                                prob = c(1 / n_vars, rep(1 / n_size, n_size - 1))),
                          nrow = n_obs, ncol = n_vars))
 
 if (requireNamespace("zoo", quietly = TRUE)) {

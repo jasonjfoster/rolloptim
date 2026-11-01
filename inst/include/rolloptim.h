@@ -84,16 +84,17 @@ struct RollMinVarMuFALSE : public Worker {
           arma::vec weights_subset = weights.subvec(0, n_cols - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
-              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
-            
-            n_solve += 1;
+          // tolerance for consistency with R's all.equal
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             // objective value
             long double obj = arma::as_scalar(trans(weights_subset) * sigma * weights_subset);
             
+            // don't keep solution if objective value is missing
             if (obj <= obj_prev) {
               
+              n_solve += 1;
               obj_prev = obj;
               
               arma_weights.row(i) = trans(weights_subset);
@@ -200,17 +201,18 @@ struct RollMinVarMuTRUE : public Worker {
           double total_mu = arma::as_scalar(mu * weights_subset);
 
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
-              (weights_subset.max() - arma_upper[0] <= arma::datum::eps) &&
-              (arma_target(i) - total_mu <= arma::datum::eps)) {
-            
-            n_solve += 1;
+          // tolerance for consistency with R's all.equal
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps)) &&
+              (arma_target(i) - total_mu <= sqrt(arma::datum::eps))) {
             
             // objective value
             long double obj = arma::as_scalar(trans(weights_subset) * sigma * weights_subset);
             
+            // don't keep solution if objective value is missing
             if (obj <= obj_prev) {
               
+              n_solve += 1;
               obj_prev = obj;
               
               arma_weights.row(i) = trans(weights_subset);
@@ -305,16 +307,17 @@ struct RollMaxMeanSigmaFALSE : public Worker {
           arma::vec weights_subset = weights.subvec(0, n_cols - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
-              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
-            
-            n_solve += 1;
+          // tolerance for consistency with R's all.equal
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             // objective value
             long double obj = arma::as_scalar(-mu * weights_subset);
             
+            // don't keep solution if objective value is missing
             if (obj <= obj_prev) {
               
+              n_solve += 1;
               obj_prev = obj;
               
               arma_weights.row(i) = trans(weights_subset);
@@ -414,17 +417,18 @@ struct RollMaxUtility : public Worker {
           arma::vec weights_subset = weights.subvec(0, n_cols_mu - 1);
           
           // check if constraints are satisfied
-          if ((weights_subset.min() - arma_lower[0] >= -arma::datum::eps) &&
-              (weights_subset.max() - arma_upper[0] <= arma::datum::eps)) {
-            
-            n_solve += 1;
+          // tolerance for consistency with R's all.equal
+          if ((weights_subset.min() - arma_lower[0] >= -sqrt(arma::datum::eps)) &&
+              (weights_subset.max() - arma_upper[0] <= sqrt(arma::datum::eps))) {
             
             // objective value
             long double obj = 0.5 * lambda * arma::as_scalar(trans(weights_subset) * sigma * weights_subset) -
               arma::dot(mu, weights_subset);
             
+            // don't keep solution if objective value is missing
             if (obj <= obj_prev) {
               
+              n_solve += 1;
               obj_prev = obj;
               
               arma_weights.row(i) = trans(weights_subset);

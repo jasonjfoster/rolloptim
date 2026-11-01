@@ -18,11 +18,20 @@ roll_min_rss(xx, xy, total = 1, lower = 0, upper = 1)
 \item{upper}{numeric. Upper bound of the weights.}
 }
 \value{
-An object of the same class and dimension as \code{x} with the rolling
-optimizations to minimize residual sum of squares.
+A matrix with each row the rolling optimizations to minimize residual sum of squares.
 }
 \description{
 A function for computing rolling optimizations to minimize residual sum of squares.
+}
+\details{
+Every combination of active lower and upper bounds is enumerated within each window,
+the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+smallest residual sum of squares is kept, so the result is the constrained least squares
+coefficients implied by the crossproducts \code{xx} and \code{xy}.
+
+The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+with no feasible solution, including one whose crossproducts contain missing values, returns
+\code{NA}.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

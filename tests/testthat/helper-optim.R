@@ -3,6 +3,7 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL, target = NULL) {
   if (!is.null(mu) && !is.null(sigma) && !is.null(target)) {
 
     mu_attr <- attributes(mu)
+    mu <- as.matrix(zoo::coredata(mu))
 
     n_rows <- nrow(mu)
     n_cols <- ncol(mu)
@@ -26,6 +27,7 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL, target = NULL) {
   } else if (!is.null(mu) && !is.null(sigma)) {
 
     mu_attr <- attributes(mu)
+    mu <- as.matrix(zoo::coredata(mu))
 
     n_rows <- nrow(mu)
     n_cols <- ncol(mu)
@@ -48,6 +50,7 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL, target = NULL) {
   } else if (!is.null(mu)) {
 
     mu_attr <- attributes(mu)
+    mu <- as.matrix(zoo::coredata(mu))
 
     n_rows <- nrow(mu)
     n_cols <- ncol(mu)
@@ -98,10 +101,13 @@ rollapplyr_optim <- function(f, mu = NULL, sigma = NULL, target = NULL) {
   
 }
 
-rollapplyr_xy <- function(f, x, y, width) {
+rollapplyr_xy <- function(f, x, y, width, min_obs) {
   
-  n_rows <- if (is.matrix(x)) nrow(x) else length(x)
-  n_cols <- if (is.matrix(x)) ncol(x) else 1
+  x <- as.matrix(zoo::coredata(x))
+  y <- as.matrix(zoo::coredata(y))
+  
+  n_rows <- nrow(x)
+  n_cols <- ncol(x)
   result <- matrix(as.numeric(NA), n_rows, n_cols)
   
   for (i in 1:n_rows) {
@@ -109,7 +115,21 @@ rollapplyr_xy <- function(f, x, y, width) {
     x_subset <- x[max(1, i - width + 1):i, , drop = FALSE]
     y_subset <- y[max(1, i - width + 1):i, , drop = FALSE]
     
-    result[i, ] <- f(x_subset, y_subset)
+    # roll::roll_crossprod: 'min_obs' complete observations for 'xx' and 'xy'
+    n_obs_xx <- sum(complete.cases(x_subset))
+    n_obs_xy <- sum(complete.cases(x_subset, y_subset))
+    
+    if ((n_obs_xx >= min_obs) && (n_obs_xy >= min_obs)) {
+      
+      status_solve <- tryCatch(f(x_subset, y_subset),
+                               
+                               error = function(x) {
+                                 rep(NA, n_cols)
+                               })
+      
+      result[i, ] <- status_solve
+      
+    }
     
   }
   

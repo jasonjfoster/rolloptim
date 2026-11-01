@@ -22,10 +22,21 @@ roll_min_var(sigma, mu = NULL, target = NULL, total = 1, lower = 0,
 }
 \value{
 An object of the same class and dimension as \code{mu} with the rolling
-optimizations to minimize variance.
+optimizations to minimize variance, or a matrix with each row the rolling optimizations
+if \code{mu} is \code{NULL}.
 }
 \description{
 A function for computing rolling optimizations to minimize variance.
+}
+\details{
+Every combination of active lower and upper bounds is enumerated within each window,
+the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+smallest variance is kept. If \code{mu} and \code{target} are supplied then the expected return
+must be greater than or equal to \code{target}.
+
+The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+with no feasible solution, including one whose moments contain missing values or whose
+\code{target} is unattainable, returns \code{NA}.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

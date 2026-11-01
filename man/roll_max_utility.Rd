@@ -27,6 +27,15 @@ optimizations to maximize utility.
 \description{
 A function for computing rolling optimizations to maximize utility.
 }
+\details{
+Every combination of active lower and upper bounds is enumerated within each window,
+the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+largest quadratic utility, the expected return less one half of \code{lambda} times the
+variance, is kept.
+
+The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
+with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
+}
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {
 

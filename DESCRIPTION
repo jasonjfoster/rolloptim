@@ -1,7 +1,7 @@
 Type: Package
 Package: rolloptim
 Title: Rolling Optimizations
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     person("Jason", "Foster", , "jason.j.foster@gmail.com", role = c("aut", "cre"))
 Description: Analytical computation of rolling optimization for
@@ -44,6 +44,6 @@ LinkingTo:
     RcppArmadillo,
     RcppParallel
 Config/roxygen2/old_usage: TRUE
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
 Encoding: UTF-8
 SystemRequirements: GNU make

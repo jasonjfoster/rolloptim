@@ -27,6 +27,15 @@ optimizations to maximize mean.
 \description{
 A function for computing rolling optimizations to maximize mean.
 }
+\details{
+Every combination of active lower and upper bounds is enumerated within each window,
+the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
+largest mean is kept.
+
+The number of combinations grows as \code{4^p} in the number of variables \code{p}. \code{sigma}
+and \code{target} are not supported, so a warning is given and the arguments are ignored. A window
+with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
+}
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {
 
