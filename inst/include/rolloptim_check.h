@@ -26,6 +26,16 @@ inline void check_nonneg_finite(const double& value, const char* name) {
 
 }
 
+// scalar checks: bounded integer [lower, upper]
+inline void check_bounds_int(const int& value, const int& lower,
+                             const int& upper, const char* name) {
+
+  if ((value < lower) || (value > upper)) {
+    stop("value of '%s' must be between %d and %d", name, lower, upper);
+  }
+
+}
+
 // dimension checks: equality
 inline void check_rows_equal(const int& n_rows_a, const int& n_rows_b,
                              const char* name_a, const char* name_b) {
@@ -55,6 +65,23 @@ inline void check_square(const int& n_rows, const int& n_cols,
 }
 
 // dimension checks: bounds
+inline void check_cube(const SEXP& dim, const char* name) {
+
+  if (Rf_isNull(dim) || (Rf_length(dim) != 3)) {
+    stop("'%s' must be cube", name);
+  }
+
+}
+
+inline void check_univariate(const int& n_cols, const char* name_a,
+                             const char* name_b) {
+
+  if (n_cols != 1) {
+    stop("number of columns in '%s' must be one for univariate '%s'", name_a, name_b);
+  }
+
+}
+
 inline void check_bounds(const double& lower, const double& upper) {
 
   check_finite(lower, "lower");

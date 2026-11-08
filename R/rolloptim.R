@@ -2,7 +2,8 @@
 #'
 #' A function for computing rolling optimizations to minimize variance.
 #' 
-#' @param sigma cube. Slices are covariance matrices.
+#' @param sigma cube or vector. Slices are covariance matrices, or rows are variances for one
+#' variable if \code{mu} and \code{target} are supplied.
 #' @param mu matrix. Rows are means and columns are variables.
 #' @param target vector. Rows are target means.
 #' @param total numeric. Sum of the weights.
@@ -13,9 +14,9 @@
 #' smallest variance is kept. If \code{mu} and \code{target} are supplied then the expected return
 #' must be greater than or equal to \code{target}.
 #'
-#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-#' with no feasible solution, including one whose moments contain missing values or whose
-#' \code{target} is unattainable, returns \code{NA}.
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+#' is limited to 14. A window with no feasible solution, including one whose moments contain
+#' missing values or whose \code{target} is unattainable, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
 #' optimizations to minimize variance, or a matrix with each row the rolling optimizations
 #' if \code{mu} is \code{NULL}.
@@ -59,9 +60,10 @@ roll_min_var <- function(sigma, mu = NULL, target = NULL,
 #' the Karush-Kuhn-Tucker system is solved for each combination, and the feasible solution with the
 #' largest mean is kept.
 #'
-#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. \code{sigma}
-#' and \code{target} are not supported, so a warning is given and the arguments are ignored. A window
-#' with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+#' is limited to 14. \code{sigma} and \code{target} are not supported, so a warning is given and the
+#' arguments are ignored. A window with no feasible solution, including one whose moments contain
+#' missing values, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
 #' optimizations to maximize mean.
 #' @examples
@@ -95,7 +97,8 @@ roll_max_mean <- function(mu, sigma = NULL, target = NULL,
 #' A function for computing rolling optimizations to maximize utility.
 #' 
 #' @param mu matrix. Rows are means and columns are variables.
-#' @param sigma cube. Slices are covariance matrices.
+#' @param sigma cube or vector. Slices are covariance matrices, or rows are variances for one
+#' variable.
 #' @param lambda numeric. Risk aversion parameter.
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
@@ -105,8 +108,9 @@ roll_max_mean <- function(mu, sigma = NULL, target = NULL,
 #' largest quadratic utility, the expected return less one half of \code{lambda} times the
 #' variance, is kept.
 #'
-#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-#' with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+#' is limited to 14. A window with no feasible solution, including one whose moments contain
+#' missing values, returns \code{NA}.
 #' @return An object of the same class and dimension as \code{mu} with the rolling
 #' optimizations to maximize utility.
 #' @examples
@@ -139,8 +143,10 @@ roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper 
 #'
 #' A function for computing rolling optimizations to minimize residual sum of squares.
 #' 
-#' @param xx cube. Slices are crossproducts of \code{x} and \code{x}.
-#' @param xy cube. Slices are crossproducts of \code{x} and \code{y}.
+#' @param xx cube or vector. Slices are crossproducts of \code{x} and \code{x}, or rows are
+#' crossproducts for one variable.
+#' @param xy cube or vector. Slices are crossproducts of \code{x} and \code{y}, or rows are
+#' crossproducts for one variable.
 #' @param total numeric. Sum of the weights.
 #' @param lower numeric. Lower bound of the weights.
 #' @param upper numeric. Upper bound of the weights.
@@ -149,9 +155,9 @@ roll_max_utility <- function(mu, sigma, lambda = 1, total = 1, lower = 0, upper 
 #' smallest residual sum of squares is kept, so the result is the constrained least squares
 #' coefficients implied by the crossproducts \code{xx} and \code{xy}.
 #'
-#' The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-#' with no feasible solution, including one whose crossproducts contain missing values, returns
-#' \code{NA}.
+#' The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+#' is limited to 14. A window with no feasible solution, including one whose crossproducts contain
+#' missing values, returns \code{NA}.
 #' @return A matrix with each row the rolling optimizations to minimize residual sum of squares.
 #' @examples
 #' if (requireNamespace("roll", quietly = TRUE)) {

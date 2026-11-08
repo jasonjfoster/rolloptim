@@ -10,7 +10,8 @@ roll_max_utility(mu, sigma, lambda = 1, total = 1, lower = 0,
 \arguments{
 \item{mu}{matrix. Rows are means and columns are variables.}
 
-\item{sigma}{cube. Slices are covariance matrices.}
+\item{sigma}{cube or vector. Slices are covariance matrices, or rows are variances for one
+variable.}
 
 \item{lambda}{numeric. Risk aversion parameter.}
 
@@ -33,8 +34,9 @@ the Karush-Kuhn-Tucker system is solved for each combination, and the feasible s
 largest quadratic utility, the expected return less one half of \code{lambda} times the
 variance, is kept.
 
-The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-with no feasible solution, including one whose moments contain missing values, returns \code{NA}.
+The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+is limited to 14. A window with no feasible solution, including one whose moments contain
+missing values, returns \code{NA}.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

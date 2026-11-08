@@ -8,7 +8,8 @@ roll_min_var(sigma, mu = NULL, target = NULL, total = 1, lower = 0,
   upper = 1)
 }
 \arguments{
-\item{sigma}{cube. Slices are covariance matrices.}
+\item{sigma}{cube or vector. Slices are covariance matrices, or rows are variances for one
+variable if \code{mu} and \code{target} are supplied.}
 
 \item{mu}{matrix. Rows are means and columns are variables.}
 
@@ -34,9 +35,9 @@ the Karush-Kuhn-Tucker system is solved for each combination, and the feasible s
 smallest variance is kept. If \code{mu} and \code{target} are supplied then the expected return
 must be greater than or equal to \code{target}.
 
-The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-with no feasible solution, including one whose moments contain missing values or whose
-\code{target} is unattainable, returns \code{NA}.
+The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+is limited to 14. A window with no feasible solution, including one whose moments contain
+missing values or whose \code{target} is unattainable, returns \code{NA}.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

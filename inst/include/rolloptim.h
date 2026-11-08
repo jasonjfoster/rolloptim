@@ -46,7 +46,7 @@ struct RollMinVarMuFALSE : public Worker {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
       int n_solve = 0;
-      int n_combn = 1 << (2 * n_cols); // 2 ^ (2 * n_cols)
+      int n_combn = 1 << (2 * n_cols); // 2 ^ (2 * n_cols): 'n_cols' <= 15 for int
       long double obj_prev = arma::datum::inf;
       arma::mat sigma = arma_sigma.slice(i);
       arma::mat A(arma_A.begin(), n_cols + 1 + n_cols + n_cols,
@@ -154,7 +154,7 @@ struct RollMinVarMuTRUE : public Worker {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
       int n_solve = 0;
-      int n_combn = 1 << (2 * n_cols + 1); // 2 ^ (2 * n_cols + 1)
+      int n_combn = 1 << (2 * n_cols + 1); // 2 ^ (2 * n_cols + 1): 'n_cols' <= 14 for int
       long double obj_prev = arma::datum::inf;
       arma::mat sigma = arma_sigma.slice(i);
       arma::mat mu = arma_mu.row(i);
@@ -268,7 +268,7 @@ struct RollMaxMeanSigmaFALSE : public Worker {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
       int n_solve = 0;
-      int n_combn = 1 << (2 * n_cols); // 2 ^ (2 * n_cols)
+      int n_combn = 1 << (2 * n_cols); // 2 ^ (2 * n_cols): 'n_cols' <= 15 for int
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat A(arma_A.begin(), n_cols + 1 + n_cols + n_cols,
@@ -377,7 +377,7 @@ struct RollMaxUtility : public Worker {
     for (std::size_t i = begin_slice; i < end_slice; i++) {
       
       int n_solve = 0;
-      int n_combn = 1 << (2 * n_cols_mu); // 2 ^ (2 * n_cols_mu)
+      int n_combn = 1 << (2 * n_cols_mu); // 2 ^ (2 * n_cols_mu): 'n_cols_mu' <= 15 for int
       long double obj_prev = arma::datum::inf;
       arma::mat mu = arma_mu.row(i);
       arma::mat sigma = arma_sigma.slice(i);

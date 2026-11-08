@@ -9,10 +9,9 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
     SEXP sexp_dim_sigma = sigma.attr("dim");
 
-    // if (Rf_isNull(sexp_dim_sigma)) {
-    //   stop("'sigma' must be cube with slices of covariance matrices");
-    // }
-    
+    // check 'sigma' argument for errors
+    rolloptim::check_cube(sexp_dim_sigma, "sigma");
+
     IntegerVector dim_sigma(sexp_dim_sigma);
     int n_rows = dim_sigma[2];
     int n_cols = dim_sigma[1];
@@ -30,7 +29,13 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
     
+    // check 'n_cols' variable for errors
+    rolloptim::check_bounds_int(n_cols, 1, 14, "n_cols");
+
+    // check 'lower' and 'upper' arguments for errors
     rolloptim::check_bounds(lower, upper);
+
+    // check 'total' argument for errors
     rolloptim::check_total(n_cols, total, lower, upper);
 
     arma_ones.ones();
@@ -72,6 +77,7 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
   } else {
 
+    // check 'mu' and 'target' arguments for errors
     rolloptim::check_target(mu, target, "mu");
 
     NumericMatrix rcpp_mu(mu);
@@ -85,8 +91,12 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
     if (!Rf_isNull(sexp_dim_sigma)) {
 
+      // check 'sigma' argument for errors
+      rolloptim::check_cube(sexp_dim_sigma, "sigma");
+
       IntegerVector dim_sigma(sexp_dim_sigma);
 
+      // check 'mu' and 'sigma' arguments for errors
       rolloptim::check_rows_equal(n_rows, dim_sigma[2], "mu", "sigma");
       rolloptim::check_cols_equal(n_cols, dim_sigma[1], "mu", "sigma");
       rolloptim::check_square(dim_sigma[0], dim_sigma[1], "sigma");
@@ -95,10 +105,8 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
 
     } else {
       
-      // if (n_cols != 1) {
-      //   stop("number of columns in 'mu' must be one for univariate sigma");
-      // }
-
+      // check 'mu' and 'sigma' arguments for errors
+      rolloptim::check_univariate(n_cols, "mu", "sigma");
       rolloptim::check_rows_equal(n_rows, sigma.size(), "mu", "sigma");
 
       arma_sigma = arma::cube(1, 1, n_rows);
@@ -118,7 +126,13 @@ NumericMatrix roll_min_var(const NumericVector& sigma, const SEXP& mu,
     arma::vec arma_b(n_size);
     arma::mat arma_weights(n_rows, n_cols);
 
+    // check 'n_cols' variable for errors
+    rolloptim::check_bounds_int(n_cols, 1, 14, "n_cols");
+
+    // check 'lower' and 'upper' arguments for errors
     rolloptim::check_bounds(lower, upper);
+
+    // check 'total' argument for errors
     rolloptim::check_total(n_cols, total, lower, upper);
 
     arma_ones.ones();
@@ -193,7 +207,13 @@ NumericMatrix roll_max_mean(const NumericMatrix& mu, const SEXP& sigma,
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
 
+  // check 'n_cols' variable for errors
+  rolloptim::check_bounds_int(n_cols, 1, 14, "n_cols");
+
+  // check 'lower' and 'upper' arguments for errors
   rolloptim::check_bounds(lower, upper);
+
+  // check 'total' argument for errors
   rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
@@ -247,8 +267,12 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
 
   if (!Rf_isNull(sexp_dim_sigma)) {
 
+    // check 'sigma' argument for errors
+    rolloptim::check_cube(sexp_dim_sigma, "sigma");
+
     IntegerVector dim_sigma(sexp_dim_sigma);
 
+    // check 'mu' and 'sigma' arguments for errors
     rolloptim::check_rows_equal(n_rows, dim_sigma[2], "mu", "sigma");
     rolloptim::check_cols_equal(n_cols, dim_sigma[1], "mu", "sigma");
     rolloptim::check_square(dim_sigma[0], dim_sigma[1], "sigma");
@@ -257,10 +281,8 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
 
   } else {
 
-      // if (n_cols != 1) {
-      //   stop("number of columns in 'mu' must be one for univariate sigma");
-      // }
-
+    // check 'mu' and 'sigma' arguments for errors
+    rolloptim::check_univariate(n_cols, "mu", "sigma");
     rolloptim::check_rows_equal(n_rows, sigma.size(), "mu", "sigma");
 
     arma_sigma = arma::cube(1, 1, n_rows);
@@ -279,8 +301,16 @@ NumericMatrix roll_max_utility(const NumericMatrix& mu, const NumericVector& sig
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
   
+  // check 'n_cols' variable for errors
+  rolloptim::check_bounds_int(n_cols, 1, 14, "n_cols");
+
+  // check 'lambda' argument for errors
   rolloptim::check_nonneg_finite(lambda, "lambda");
+
+  // check 'lower' and 'upper' arguments for errors
   rolloptim::check_bounds(lower, upper);
+
+  // check 'total' argument for errors
   rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();
@@ -333,39 +363,61 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
 
   if (!Rf_isNull(sexp_dim_xx) && !Rf_isNull(sexp_dim_xy)) {
 
+    // check 'xx' and 'xy' arguments for errors
+    rolloptim::check_cube(sexp_dim_xx, "sigma");
+    rolloptim::check_cube(sexp_dim_xy, "mu");
+
     IntegerVector dim_xx(sexp_dim_xx);
     IntegerVector dim_xy(sexp_dim_xy);
 
-    // if (dim_xx.size() == 3) {
-    
-      n_rows = dim_xx[2];
-      n_cols = dim_xx[1];
+    n_rows = dim_xx[2];
+    n_cols = dim_xx[1];
 
-    // } else if (dim_xx.size() == 2) {
-
-    //     n_rows = dim_xx[0];
-    //     n_cols = dim_xx[1];
-
-    // }
-
+    // check 'xx' and 'xy' arguments for errors
     rolloptim::check_square(dim_xx[0], dim_xx[1], "sigma");
-
-    // if (dim_xy.size() == 3) {
-
-      rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
-      rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
-
-    // } else if (dim_xy.size() == 2) {
-
-    //   rolloptim::check_cols_equal(n_rows, dim_xy[1], "mu", "sigma");
-    //   rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
-
-    // }
+    rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
+    rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
 
   } else {
 
-    n_rows = xx.size();
-    n_cols = 1;   
+    n_cols = 1;
+
+    if (!Rf_isNull(sexp_dim_xx)) {
+
+      // check 'xx' argument for errors
+      rolloptim::check_cube(sexp_dim_xx, "sigma");
+
+      IntegerVector dim_xx(sexp_dim_xx);
+
+      n_rows = dim_xx[2];
+
+      // check 'xx' and 'xy' arguments for errors
+      rolloptim::check_univariate(dim_xx[1], "sigma", "mu");
+      rolloptim::check_square(dim_xx[0], dim_xx[1], "sigma");
+
+    } else {
+
+      n_rows = xx.size();
+
+    }
+
+    if (!Rf_isNull(sexp_dim_xy)) {
+
+      // check 'xy' argument for errors
+      rolloptim::check_cube(sexp_dim_xy, "mu");
+
+      IntegerVector dim_xy(sexp_dim_xy);
+
+      // check 'xx' and 'xy' arguments for errors
+      rolloptim::check_univariate(dim_xy[0], "mu", "sigma");
+      rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
+
+    } else {
+
+      // check 'xx' and 'xy' arguments for errors
+      rolloptim::check_rows_equal(n_rows, xy.size(), "mu", "sigma");
+
+    }
 
   }
   
@@ -380,7 +432,13 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   arma::vec arma_b(n_size);
   arma::mat arma_weights(n_rows, n_cols);
 
+  // check 'n_cols' variable for errors
+  rolloptim::check_bounds_int(n_cols, 1, 14, "n_cols");
+
+  // check 'lower' and 'upper' arguments for errors
   rolloptim::check_bounds(lower, upper);
+
+  // check 'total' argument for errors
   rolloptim::check_total(n_cols, total, lower, upper);
 
   arma_ones.ones();

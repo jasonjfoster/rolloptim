@@ -7,9 +7,11 @@
 roll_min_rss(xx, xy, total = 1, lower = 0, upper = 1)
 }
 \arguments{
-\item{xx}{cube. Slices are crossproducts of \code{x} and \code{x}.}
+\item{xx}{cube or vector. Slices are crossproducts of \code{x} and \code{x}, or rows are
+crossproducts for one variable.}
 
-\item{xy}{cube. Slices are crossproducts of \code{x} and \code{y}.}
+\item{xy}{cube or vector. Slices are crossproducts of \code{x} and \code{y}, or rows are
+crossproducts for one variable.}
 
 \item{total}{numeric. Sum of the weights.}
 
@@ -29,9 +31,9 @@ the Karush-Kuhn-Tucker system is solved for each combination, and the feasible s
 smallest residual sum of squares is kept, so the result is the constrained least squares
 coefficients implied by the crossproducts \code{xx} and \code{xy}.
 
-The number of combinations grows as \code{4^p} in the number of variables \code{p}. A window
-with no feasible solution, including one whose crossproducts contain missing values, returns
-\code{NA}.
+The number of combinations grows as \code{4^p} in the number of variables \code{p}, so \code{p}
+is limited to 14. A window with no feasible solution, including one whose crossproducts contain
+missing values, returns \code{NA}.
 }
 \examples{
 if (requireNamespace("roll", quietly = TRUE)) {

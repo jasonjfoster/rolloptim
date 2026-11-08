@@ -18,12 +18,34 @@ test_that("input checks", {
   test_check_xx <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 1:2], width)
   test_check_xy <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 3], width)
   
+  # check_cube
+  expect_error(roll_min_var(test_check_sigma[ , , 1]),
+               "'sigma' must be cube")
+  expect_error(roll_min_var(test_check_sigma[ , , 1], mu = test_check_mu, target = test_target_mu),
+               "'sigma' must be cube")
+  expect_error(roll_max_utility(test_check_mu, test_check_sigma[ , , 1]),
+               "'sigma' must be cube")
+  
+  # check_cube: vector 'sigma' (roll_min_var only)
+  expect_error(roll_min_var(test_check_sigma[1, 1, ]),
+               "'sigma' must be cube")
+  
   # check_square
   expect_error(roll_min_var(test_check_sigma[ , 1:2, ]),
+               "dimensions of 'sigma' must be square")
+  expect_error(roll_min_var(test_check_sigma[1:2, , ], mu = test_check_mu, target = test_target_mu),
+               "dimensions of 'sigma' must be square")
+  expect_error(roll_max_utility(test_check_mu, test_check_sigma[1:2, , ]),
                "dimensions of 'sigma' must be square")
   
   # check_bounds
   expect_error(roll_min_var(test_check_sigma, lower = 1, upper = 0),
+               "value of 'lower' must be less than or equal to value of 'upper'")
+  expect_error(roll_max_mean(test_check_mu, lower = 1, upper = 0),
+               "value of 'lower' must be less than or equal to value of 'upper'")
+  expect_error(roll_max_utility(test_check_mu, test_check_sigma, lower = 1, upper = 0),
+               "value of 'lower' must be less than or equal to value of 'upper'")
+  expect_error(roll_min_rss(test_check_xx, test_check_xy, lower = 1, upper = 0),
                "value of 'lower' must be less than or equal to value of 'upper'")
   
   # check_finite: 'lower'
@@ -41,6 +63,12 @@ test_that("input checks", {
   # check_total
   expect_error(roll_min_var(test_check_sigma, total = n_vars + 1),
                "'total' must be between")
+  expect_error(roll_max_mean(test_check_mu, total = n_vars + 1),
+               "'total' must be between")
+  expect_error(roll_max_utility(test_check_mu, test_check_sigma, total = n_vars + 1),
+               "'total' must be between")
+  expect_error(roll_min_rss(test_check_xx, test_check_xy, total = n_vars + 1),
+               "'total' must be between")
   
   # check_target
   expect_error(roll_min_var(test_check_sigma, mu = test_check_mu),
@@ -51,6 +79,12 @@ test_that("input checks", {
                "number of rows in 'mu' must equal the number of rows in 'sigma'")
   expect_error(roll_max_utility(test_check_mu[-1, ], test_check_sigma),
                "number of rows in 'mu' must equal the number of rows in 'sigma'")
+  
+  # check_univariate
+  expect_error(roll_min_var(test_check_sigma[1, 1, ], mu = test_check_mu, target = test_target_mu),
+               "number of columns in 'mu' must be one for univariate 'sigma'")
+  expect_error(roll_max_utility(test_check_mu, test_check_sigma[1, 1, ]),
+               "number of columns in 'mu' must be one for univariate 'sigma'")
   
   # check_rows_equal: vector 'sigma'
   expect_error(roll_min_var(test_check_sigma[1, 1, ], mu = test_check_mu[-1, 1, drop = FALSE],
@@ -69,6 +103,42 @@ test_that("input checks", {
   expect_error(roll_max_utility(test_check_mu, test_check_sigma, lambda = -1),
                "'lambda' must be non-negative finite value")
   
+  # check_cube: 'xx' (named 'sigma' in roll_min_rss)
+  expect_error(roll_min_rss(test_check_xx[ , , 1], test_check_xy),
+               "'sigma' must be cube")
+  
+  # check_cube: 'xy' (named 'mu' in roll_min_rss)
+  expect_error(roll_min_rss(test_check_xx, test_check_xy[ , 1, ]),
+               "'mu' must be cube")
+  
+  # check_cube: vector 'xy' with matrix 'xx' (named 'mu' and 'sigma' in roll_min_rss)
+  expect_error(roll_min_rss(test_check_xx[ , , 1], test_check_xy[1, 1, ]),
+               "'sigma' must be cube")
+  
+  # check_cube: vector 'xx' with matrix 'xy'
+  expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[ , 1, ]),
+               "'mu' must be cube")
+  
+  # check_univariate: vector 'xy' with cube 'xx'
+  expect_error(roll_min_rss(test_check_xx, test_check_xy[1, 1, ]),
+               "number of columns in 'sigma' must be one for univariate 'mu'")
+  
+  # check_univariate: vector 'xx' with cube 'xy'
+  expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy),
+               "number of columns in 'mu' must be one for univariate 'sigma'")
+  
+  # check_square: vector 'xy' with cube 'xx'
+  expect_error(roll_min_rss(test_check_xx[ , 1, , drop = FALSE], test_check_xy[1, 1, ]),
+               "dimensions of 'sigma' must be square")
+  
+  # check_rows_equal: vector 'xx' with cube 'xy'
+  expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[1, 1, -1, drop = FALSE]),
+               "number of rows in 'mu' must equal the number of rows in 'sigma'")
+  
+  # check_rows_equal: vector 'xx' and 'xy'
+  expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[1, 1, -1]),
+               "number of rows in 'mu' must equal the number of rows in 'sigma'")
+  
   # check_square: 'xx' (named 'sigma' in roll_min_rss)
   expect_error(roll_min_rss(test_check_xx[ , 1, , drop = FALSE], test_check_xy),
                "dimensions of 'sigma' must be square")
@@ -80,6 +150,18 @@ test_that("input checks", {
   # check_cols_equal: 'xy' (named 'mu' in roll_min_rss)
   expect_error(roll_min_rss(test_check_xx, test_check_xy[1, , , drop = FALSE]),
                "number of columns in 'mu' must equal the number of columns in 'sigma'")
+  
+  # check_bounds_int: 'n_cols'
+  expect_error(roll_min_var(array(0, c(15, 15, n_obs))),
+               "value of 'n_cols' must be between 1 and 14")
+  expect_error(roll_min_var(array(0, c(15, 15, n_obs)), mu = matrix(0, n_obs, 15), target = test_target_mu),
+               "value of 'n_cols' must be between 1 and 14")
+  expect_error(roll_max_mean(matrix(0, n_obs, 15)),
+               "value of 'n_cols' must be between 1 and 14")
+  expect_error(roll_max_utility(matrix(0, n_obs, 15), array(0, c(15, 15, n_obs))),
+               "value of 'n_cols' must be between 1 and 14")
+  expect_error(roll_min_rss(array(0, c(15, 15, n_obs)), array(0, c(15, 1, n_obs))),
+               "value of 'n_cols' must be between 1 and 14")
   
 })
 
