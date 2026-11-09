@@ -6,7 +6,7 @@ test_that("solutions on the bounds", {
   
   if (!all(status)) {
     
-    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
+    skip(paste0("'", paste0(names(status[!status]), collapse = "', '"),
                 "' package(s) required for this test"))
     
   }
@@ -45,7 +45,7 @@ test_that("missing values", {
   
   if (!all(status)) {
     
-    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
+    skip(paste0("'", paste0(names(status[!status]), collapse = "', '"),
                 "' package(s) required for this test"))
     
   }
@@ -67,7 +67,7 @@ test_that("univariate", {
   
   if (!all(status)) {
     
-    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
+    skip(paste0("'", paste0(names(status[!status]), collapse = "', '"),
                 "' package(s) required for this test"))
     
   }

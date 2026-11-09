@@ -6,7 +6,7 @@ test_that("equivalent to CVXR::psolve", {
   
   if (!all(status)) {
     
-    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
+    skip(paste0("'", paste0(names(status[!status]), collapse = "', '"),
                 "' package(s) required for this test"))
     
   }

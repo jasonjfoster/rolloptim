@@ -6,8 +6,8 @@ test_that("equivalent to ROI::ROI_solve", {
   
   if (!all(status)) {
     
-    skip(paste0(paste0("'", paste0(names(status[!status]), collapse = ", '", sep = "'")),
-         "' package(s) required for this test"))
+    skip(paste0("'", paste0(names(status[!status]), collapse = "', '"),
+                "' package(s) required for this test"))
     
   }
   
