@@ -364,8 +364,8 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
   if (!Rf_isNull(sexp_dim_xx) && !Rf_isNull(sexp_dim_xy)) {
 
     // check 'xx' and 'xy' arguments for errors
-    rolloptim::check_cube(sexp_dim_xx, "sigma");
-    rolloptim::check_cube(sexp_dim_xy, "mu");
+    rolloptim::check_cube(sexp_dim_xx, "xx");
+    rolloptim::check_cube(sexp_dim_xy, "xy");
 
     IntegerVector dim_xx(sexp_dim_xx);
     IntegerVector dim_xy(sexp_dim_xy);
@@ -374,9 +374,9 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
     n_cols = dim_xx[1];
 
     // check 'xx' and 'xy' arguments for errors
-    rolloptim::check_square(dim_xx[0], dim_xx[1], "sigma");
-    rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
-    rolloptim::check_cols_equal(n_cols, dim_xy[0], "mu", "sigma");
+    rolloptim::check_square(dim_xx[0], dim_xx[1], "xx");
+    rolloptim::check_rows_equal(n_rows, dim_xy[2], "xy", "xx");
+    rolloptim::check_cols_equal(n_cols, dim_xy[0], "xy", "xx");
 
   } else {
 
@@ -385,15 +385,15 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
     if (!Rf_isNull(sexp_dim_xx)) {
 
       // check 'xx' argument for errors
-      rolloptim::check_cube(sexp_dim_xx, "sigma");
+      rolloptim::check_cube(sexp_dim_xx, "xx");
 
       IntegerVector dim_xx(sexp_dim_xx);
 
       n_rows = dim_xx[2];
 
       // check 'xx' and 'xy' arguments for errors
-      rolloptim::check_univariate(dim_xx[1], "sigma", "mu");
-      rolloptim::check_square(dim_xx[0], dim_xx[1], "sigma");
+      rolloptim::check_univariate(dim_xx[1], "xx", "xy");
+      rolloptim::check_square(dim_xx[0], dim_xx[1], "xx");
 
     } else {
 
@@ -404,18 +404,18 @@ NumericMatrix roll_min_rss(const NumericVector& xx, const NumericVector& xy,
     if (!Rf_isNull(sexp_dim_xy)) {
 
       // check 'xy' argument for errors
-      rolloptim::check_cube(sexp_dim_xy, "mu");
+      rolloptim::check_cube(sexp_dim_xy, "xy");
 
       IntegerVector dim_xy(sexp_dim_xy);
 
       // check 'xx' and 'xy' arguments for errors
-      rolloptim::check_univariate(dim_xy[0], "mu", "sigma");
-      rolloptim::check_rows_equal(n_rows, dim_xy[2], "mu", "sigma");
+      rolloptim::check_univariate(dim_xy[0], "xy", "xx");
+      rolloptim::check_rows_equal(n_rows, dim_xy[2], "xy", "xx");
 
     } else {
 
       // check 'xx' and 'xy' arguments for errors
-      rolloptim::check_rows_equal(n_rows, xy.size(), "mu", "sigma");
+      rolloptim::check_rows_equal(n_rows, xy.size(), "xy", "xx");
 
     }
 

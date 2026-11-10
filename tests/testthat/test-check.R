@@ -103,53 +103,53 @@ test_that("input checks", {
   expect_error(roll_max_utility(test_check_mu, test_check_sigma, lambda = -1),
                "'lambda' must be non-negative finite value")
   
-  # check_cube: 'xx' (named 'sigma' in roll_min_rss)
+  # check_cube: 'xx'
   expect_error(roll_min_rss(test_check_xx[ , , 1], test_check_xy),
-               "'sigma' must be cube")
+               "'xx' must be cube")
   
-  # check_cube: 'xy' (named 'mu' in roll_min_rss)
+  # check_cube: 'xy'
   expect_error(roll_min_rss(test_check_xx, test_check_xy[ , 1, ]),
-               "'mu' must be cube")
+               "'xy' must be cube")
   
-  # check_cube: vector 'xy' with matrix 'xx' (named 'mu' and 'sigma' in roll_min_rss)
+  # check_cube: vector 'xy' with matrix 'xx'
   expect_error(roll_min_rss(test_check_xx[ , , 1], test_check_xy[1, 1, ]),
-               "'sigma' must be cube")
+               "'xx' must be cube")
   
   # check_cube: vector 'xx' with matrix 'xy'
   expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[ , 1, ]),
-               "'mu' must be cube")
+               "'xy' must be cube")
   
   # check_univariate: vector 'xy' with cube 'xx'
   expect_error(roll_min_rss(test_check_xx, test_check_xy[1, 1, ]),
-               "number of columns in 'sigma' must be one for univariate 'mu'")
+               "number of columns in 'xx' must be one for univariate 'xy'")
   
   # check_univariate: vector 'xx' with cube 'xy'
   expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy),
-               "number of columns in 'mu' must be one for univariate 'sigma'")
+               "number of columns in 'xy' must be one for univariate 'xx'")
   
   # check_square: vector 'xy' with cube 'xx'
   expect_error(roll_min_rss(test_check_xx[ , 1, , drop = FALSE], test_check_xy[1, 1, ]),
-               "dimensions of 'sigma' must be square")
+               "dimensions of 'xx' must be square")
   
   # check_rows_equal: vector 'xx' with cube 'xy'
   expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[1, 1, -1, drop = FALSE]),
-               "number of rows in 'mu' must equal the number of rows in 'sigma'")
+               "number of rows in 'xy' must equal the number of rows in 'xx'")
   
   # check_rows_equal: vector 'xx' and 'xy'
   expect_error(roll_min_rss(test_check_xx[1, 1, ], test_check_xy[1, 1, -1]),
-               "number of rows in 'mu' must equal the number of rows in 'sigma'")
+               "number of rows in 'xy' must equal the number of rows in 'xx'")
   
-  # check_square: 'xx' (named 'sigma' in roll_min_rss)
+  # check_square: 'xx'
   expect_error(roll_min_rss(test_check_xx[ , 1, , drop = FALSE], test_check_xy),
-               "dimensions of 'sigma' must be square")
+               "dimensions of 'xx' must be square")
   
-  # check_rows_equal: 'xy' (named 'mu' in roll_min_rss)
+  # check_rows_equal: 'xy'
   expect_error(roll_min_rss(test_check_xx, test_check_xy[ , , -1, drop = FALSE]),
-               "number of rows in 'mu' must equal the number of rows in 'sigma'")
+               "number of rows in 'xy' must equal the number of rows in 'xx'")
   
-  # check_cols_equal: 'xy' (named 'mu' in roll_min_rss)
+  # check_cols_equal: 'xy'
   expect_error(roll_min_rss(test_check_xx, test_check_xy[1, , , drop = FALSE]),
-               "number of columns in 'mu' must equal the number of columns in 'sigma'")
+               "number of columns in 'xy' must equal the number of columns in 'xx'")
   
   # check_bounds_int: 'n_cols'
   expect_error(roll_min_var(array(0, c(15, 15, n_obs))),

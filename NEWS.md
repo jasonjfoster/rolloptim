@@ -8,6 +8,8 @@
 
 * Fixed an issue for missing values in the `roll_max_utility` and `roll_min_rss` functions
 
+* Fixed an issue for the argument names of the error messages in the `roll_min_rss` function
+
 * Added tests for missing values, infeasible targets, univariate `sigma`, `xx`, and `xy` arguments, and input checks
 
 ## Version 1.0.0
