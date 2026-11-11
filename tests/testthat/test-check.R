@@ -11,13 +11,6 @@ test_that("input checks", {
     
   }
   
-  # test data
-  width <- test_width[2]
-  test_check_mu <- roll::roll_mean(test_ls[[1]], width)
-  test_check_sigma <- roll::roll_cov(test_ls[[1]], width = width)
-  test_check_xx <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 1:2], width)
-  test_check_xy <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 3], width)
-  
   # check_cube
   expect_error(roll_min_var(test_check_sigma[ , , 1]),
                "'sigma' must be cube")
@@ -177,11 +170,6 @@ test_that("input warnings", {
                 "' package(s) required for this test"))
     
   }
-  
-  # test data
-  width <- test_width[2]
-  test_check_mu <- roll::roll_mean(test_ls[[1]], width)
-  test_check_sigma <- roll::roll_cov(test_ls[[1]], width = width)
   
   # 'sigma' (roll_max_mean only)
   expect_warning(roll_max_mean(test_check_mu, sigma = test_check_sigma),

@@ -29,3 +29,10 @@ if (requireNamespace("zoo", quietly = TRUE)) {
 test_ls[[1]] <- setNames(test_ls[[1]], paste0("x", rep(1:n_vars)))
 
 # colnames(test_ls[[1]]) <- paste0("x", rep(1:n_vars))
+
+if (requireNamespace("roll", quietly = TRUE)) {
+  test_check_mu <- roll::roll_mean(test_ls[[1]], test_width[2])
+  test_check_sigma <- roll::roll_cov(test_ls[[1]], width = test_width[2])
+  test_check_xx <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 1:2], test_width[2])
+  test_check_xy <- roll::roll_crossprod(test_ls[[1]][ , 1:2], test_ls[[1]][ , 3], test_width[2])
+}
